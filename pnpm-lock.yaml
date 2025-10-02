@@ -41,6 +41,9 @@ importers:
       '@actions/github':
         specifier: ^5.1.1
         version: 5.1.1
+      '@greenlightci/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@octokit/rest':
         specifier: ^20.0.2
         version: 20.1.2
