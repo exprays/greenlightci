@@ -1,9 +1,5 @@
 import features from 'web-features';
-import {
-  BaselineFeature,
-  BaselineStatus,
-  BrowserSupport,
-} from './types.js';
+import { BaselineFeature, BaselineStatus, BrowserSupport } from './types.js';
 
 /**
  * Get baseline status from web-features data
@@ -34,9 +30,10 @@ export function getBaselineStatus(featureData: any): BaselineStatus {
  * Get baseline year from feature data
  */
 export function getBaselineYear(featureData: any): string | undefined {
-  const baselineDate = featureData.status?.baseline_high_date || 
-                       featureData.status?.baseline_low_date;
-  
+  const baselineDate =
+    featureData.status?.baseline_high_date ||
+    featureData.status?.baseline_low_date;
+
   if (baselineDate) {
     return new Date(baselineDate).getFullYear().toString();
   }
@@ -52,7 +49,7 @@ export function getBrowserSupport(featureData: any): BrowserSupport {
 
   if (featureData.status?.support) {
     const supportData = featureData.status.support;
-    
+
     if (supportData.chrome) support.chrome = supportData.chrome;
     if (supportData.edge) support.edge = supportData.edge;
     if (supportData.firefox) support.firefox = supportData.firefox;
@@ -96,7 +93,7 @@ export function getAllBaselineFeatures(): Map<string, BaselineFeature> {
  */
 export function getFeatureById(featureId: string): BaselineFeature | undefined {
   const featureData = (features as any)[featureId];
-  
+
   if (!featureData) {
     return undefined;
   }
@@ -127,7 +124,7 @@ export function calculateCompatibilityScore(
   notBaseline: number
 ): number {
   const total = widelyAvailable + newlyAvailable + limited + notBaseline;
-  
+
   if (total === 0) {
     return 100;
   }
@@ -137,12 +134,12 @@ export function calculateCompatibilityScore(
   // Newly Available: 75% weight
   // Limited: 25% weight
   // Not Baseline: 0% weight
-  const score = (
+  const score =
     (widelyAvailable * 100 +
-    newlyAvailable * 75 +
-    limited * 25 +
-    notBaseline * 0) / total
-  );
+      newlyAvailable * 75 +
+      limited * 25 +
+      notBaseline * 0) /
+    total;
 
   return Math.round(score);
 }
