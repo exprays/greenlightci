@@ -21,7 +21,9 @@ export async function run(): Promise<void> {
     const config: BaselineConfig = {
       targetYear: core.getInput('baseline-year') || '2023',
       blockNewlyAvailable: core.getBooleanInput('block-newly-available'),
-      blockLimitedAvailability: core.getBooleanInput('block-limited-availability'),
+      blockLimitedAvailability: core.getBooleanInput(
+        'block-limited-availability'
+      ),
     };
 
     const githubToken = core.getInput('github-token', { required: true });
@@ -81,14 +83,14 @@ export async function run(): Promise<void> {
       }
 
       // Combine all added content
-      const content = addedLines.map(l => l.content).join('\n');
+      const content = addedLines.map((l) => l.content).join('\n');
 
       // Detect features
       const featureIds = detectFeatures(file.to, content);
 
       for (const featureId of featureIds) {
         const feature = getFeatureById(featureId);
-        
+
         if (!feature) {
           continue;
         }
@@ -103,7 +105,10 @@ export async function run(): Promise<void> {
           newlyCount++;
           severity = 'warning';
           blocking = config.blockNewlyAvailable;
-        } else if (feature.status === BaselineStatus.Limited || feature.status === BaselineStatus.NotBaseline) {
+        } else if (
+          feature.status === BaselineStatus.Limited ||
+          feature.status === BaselineStatus.NotBaseline
+        ) {
           if (feature.status === BaselineStatus.Limited) {
             limitedCount++;
           } else {
@@ -134,9 +139,9 @@ export async function run(): Promise<void> {
     const report: CompatibilityReport = {
       results,
       score,
-      blockingCount: results.filter(r => r.blocking).length,
-      warningCount: results.filter(r => r.severity === 'warning').length,
-      infoCount: results.filter(r => r.severity === 'info').length,
+      blockingCount: results.filter((r) => r.blocking).length,
+      warningCount: results.filter((r) => r.severity === 'warning').length,
+      infoCount: results.filter((r) => r.severity === 'info').length,
       totalFeatures: results.length,
     };
 
@@ -150,7 +155,9 @@ export async function run(): Promise<void> {
     core.setOutput(ACTION_OUTPUTS.BLOCKING_ISSUES, report.blockingCount);
 
     // Format and post comment
-    const comment = await import('./github.js').then(m => m.formatComment(report));
+    const comment = await import('./github.js').then((m) =>
+      m.formatComment(report)
+    );
     await postComment(octokit, owner, repo, pullNumber, comment);
 
     // Set final status
@@ -163,7 +170,9 @@ export async function run(): Promise<void> {
         'failure',
         `${report.blockingCount} blocking compatibility issues found`
       );
-      core.setFailed(`Found ${report.blockingCount} blocking compatibility issues`);
+      core.setFailed(
+        `Found ${report.blockingCount} blocking compatibility issues`
+      );
     } else {
       await setStatus(
         octokit,

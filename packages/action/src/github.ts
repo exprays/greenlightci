@@ -18,7 +18,12 @@ export function getOctokit(token: string): Octokit {
 /**
  * Get PR diff content
  */
-export async function getPRDiff(octokit: Octokit, owner: string, repo: string, pullNumber: number): Promise<string> {
+export async function getPRDiff(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+  pullNumber: number
+): Promise<string> {
   try {
     const { data } = await octokit.rest.pulls.get({
       owner,
@@ -62,14 +67,18 @@ export function formatComment(report: CompatibilityReport): string {
 
   // Group results by severity
   const blocking = results.filter((r: CompatibilityResult) => r.blocking);
-  const warnings = results.filter((r: CompatibilityResult) => r.severity === 'warning' && !r.blocking);
-  const info = results.filter((r: CompatibilityResult) => r.severity === 'info');
+  const warnings = results.filter(
+    (r: CompatibilityResult) => r.severity === 'warning' && !r.blocking
+  );
+  const info = results.filter(
+    (r: CompatibilityResult) => r.severity === 'info'
+  );
 
   // Blocking issues
   if (blocking.length > 0) {
     comment += `### ❌ Blocking Issues\n\n`;
     comment += `The following features need attention before merging:\n\n`;
-    
+
     for (const result of blocking) {
       comment += formatFeatureResult(result);
     }
@@ -79,7 +88,7 @@ export function formatComment(report: CompatibilityReport): string {
   if (warnings.length > 0) {
     comment += `### ⚠️ Warnings\n\n`;
     comment += `These features are newly available and may need polyfills:\n\n`;
-    
+
     for (const result of warnings) {
       comment += formatFeatureResult(result);
     }
@@ -89,11 +98,11 @@ export function formatComment(report: CompatibilityReport): string {
   if (info.length > 0) {
     comment += `### ℹ️ Detected Features\n\n`;
     comment += `<details>\n<summary>Click to expand (${info.length} features)</summary>\n\n`;
-    
+
     for (const result of info) {
       comment += formatFeatureResult(result);
     }
-    
+
     comment += `</details>\n\n`;
   }
 
@@ -109,15 +118,15 @@ export function formatComment(report: CompatibilityReport): string {
 function formatFeatureResult(result: CompatibilityResult): string {
   const { feature, filePath, line } = result;
   const statusEmoji = getStatusEmoji(feature.status);
-  
+
   let output = `#### ${statusEmoji} \`${feature.name}\`\n\n`;
   output += `- **Status:** ${feature.status}`;
-  
+
   if (feature.baselineYear) {
     output += ` (Baseline ${feature.baselineYear})`;
   }
   output += `\n`;
-  
+
   output += `- **Location:** \`${filePath}\``;
   if (line) {
     output += `:${line}`;
@@ -128,10 +137,13 @@ function formatFeatureResult(result: CompatibilityResult): string {
   if (Object.keys(feature.support).length > 0) {
     output += `- **Browser Support:** `;
     const supportList: string[] = [];
-    if (feature.support.chrome) supportList.push(`Chrome ${feature.support.chrome}`);
+    if (feature.support.chrome)
+      supportList.push(`Chrome ${feature.support.chrome}`);
     if (feature.support.edge) supportList.push(`Edge ${feature.support.edge}`);
-    if (feature.support.firefox) supportList.push(`Firefox ${feature.support.firefox}`);
-    if (feature.support.safari) supportList.push(`Safari ${feature.support.safari}`);
+    if (feature.support.firefox)
+      supportList.push(`Firefox ${feature.support.firefox}`);
+    if (feature.support.safari)
+      supportList.push(`Safari ${feature.support.safari}`);
     output += supportList.join(', ') + `\n`;
   }
 
@@ -180,7 +192,7 @@ export async function postComment(
       issue_number: pullNumber,
     });
 
-    const existingComment = comments.find(comment => 
+    const existingComment = comments.find((comment) =>
       comment.body?.includes(GITHUB_MARKERS.COMMENT_HEADER)
     );
 
