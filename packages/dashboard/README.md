@@ -8,7 +8,7 @@ Next.js 14 dashboard for tracking Baseline adoption and analytics.
 dashboard/
 ├── src/
 │   ├── app/            # Next.js 14 app router
-│   ├── components/     # Reusable UI components  
+│   ├── components/     # Reusable UI components
 │   ├── lib/           # Utilities and helpers
 │   └── types/         # TypeScript type definitions
 ├── public/            # Static assets

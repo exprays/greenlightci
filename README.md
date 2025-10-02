@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: greenlightci/baseline-action@v1
         with:
-          baseline-year: "2023"
+          baseline-year: '2023'
           block-newly-available: false
 ```
 

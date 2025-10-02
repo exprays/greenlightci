@@ -24,14 +24,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": [
-    "packages/*/src/**/*",
-    "packages/*/tests/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    ".next"
-  ]
+  "include": ["packages/*/src/**/*", "packages/*/tests/**/*"],
+  "exclude": ["node_modules", "dist", "build", ".next"]
 }
