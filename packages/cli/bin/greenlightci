@@ -25,8 +25,16 @@ program
   .option('--block-limited', 'Block limited availability features', false)
   .option('--json', 'Output results as JSON', false)
   .option('--verbose', 'Show detailed output', false)
-  .option('--include <patterns>', 'File patterns to include (comma-separated)', '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}')
-  .option('--exclude <patterns>', 'File patterns to exclude (comma-separated)', 'node_modules/**,dist/**,build/**')
+  .option(
+    '--include <patterns>',
+    'File patterns to include (comma-separated)',
+    '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}'
+  )
+  .option(
+    '--exclude <patterns>',
+    'File patterns to exclude (comma-separated)',
+    'node_modules/**,dist/**,build/**'
+  )
   .action(checkCommand);
 
 // Watch command - continuously monitor files
@@ -37,8 +45,16 @@ program
   .option('-t, --target-year <year>', 'Target Baseline year', '2023')
   .option('--block-newly', 'Block newly available features', false)
   .option('--block-limited', 'Block limited availability features', false)
-  .option('--include <patterns>', 'File patterns to include (comma-separated)', '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}')
-  .option('--exclude <patterns>', 'File patterns to exclude (comma-separated)', 'node_modules/**,dist/**,build/**')
+  .option(
+    '--include <patterns>',
+    'File patterns to include (comma-separated)',
+    '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}'
+  )
+  .option(
+    '--exclude <patterns>',
+    'File patterns to exclude (comma-separated)',
+    'node_modules/**,dist/**,build/**'
+  )
   .action(watchCommand);
 
 // Report command - generate detailed compatibility report
@@ -47,10 +63,22 @@ program
   .description('Generate a detailed compatibility report')
   .argument('[path]', 'Path to scan (defaults to current directory)', '.')
   .option('-t, --target-year <year>', 'Target Baseline year', '2023')
-  .option('-o, --output <file>', 'Output file path (HTML or JSON)', 'baseline-report.html')
+  .option(
+    '-o, --output <file>',
+    'Output file path (HTML or JSON)',
+    'baseline-report.html'
+  )
   .option('--format <type>', 'Output format (html or json)', 'html')
-  .option('--include <patterns>', 'File patterns to include (comma-separated)', '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}')
-  .option('--exclude <patterns>', 'File patterns to exclude (comma-separated)', 'node_modules/**,dist/**,build/**')
+  .option(
+    '--include <patterns>',
+    'File patterns to include (comma-separated)',
+    '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}'
+  )
+  .option(
+    '--exclude <patterns>',
+    'File patterns to exclude (comma-separated)',
+    'node_modules/**,dist/**,build/**'
+  )
   .action(reportCommand);
 
 program.parse();

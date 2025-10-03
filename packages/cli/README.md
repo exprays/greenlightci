@@ -42,6 +42,7 @@ greenlightci check --json > report.json
 ```
 
 **Options:**
+
 - `-t, --target-year <year>` - Target Baseline year (default: 2023)
 - `--block-newly` - Block newly available features
 - `--block-limited` - Block limited availability features
@@ -66,6 +67,7 @@ greenlightci watch --include "src/**/*.{js,css}" --exclude "node_modules/**"
 ```
 
 **Options:**
+
 - `-t, --target-year <year>` - Target Baseline year
 - `--block-newly` - Block newly available features
 - `--block-limited` - Block limited availability features
@@ -88,6 +90,7 @@ greenlightci report ./src --output dist/baseline-report.html
 ```
 
 **Options:**
+
 - `-t, --target-year <year>` - Target Baseline year
 - `-o, --output <file>` - Output file path (default: baseline-report.html)
 - `--format <type>` - Output format: html or json (default: html)
@@ -97,6 +100,7 @@ greenlightci report ./src --output dist/baseline-report.html
 ## 📊 Example Output
 
 ### Check Command
+
 ```
 🚦 GreenLightCI - Baseline Compatibility Check
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -126,10 +130,11 @@ Average Score:      88
 ```
 
 ### Watch Mode
+
 ```
 👀 GreenLightCI - Watch Mode
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  
+
 ℹ Watching: ./src
 ℹ Target Year: 2023
 ℹ Press Ctrl+C to stop
@@ -146,6 +151,7 @@ Average Score:      88
 ## 🎨 Supported Features
 
 ### CSS Features
+
 - Container Queries (`@container`)
 - `:has()` Selector
 - CSS Grid
@@ -155,6 +161,7 @@ Average Score:      88
 - Logical Properties
 
 ### JavaScript Features
+
 - Optional Chaining (`?.`)
 - Nullish Coalescing (`??`)
 - Dynamic Import
@@ -178,6 +185,7 @@ You can create a `.greenlightrc.json` file in your project root:
 ## 📄 File Support
 
 Supported file extensions:
+
 - **CSS**: `.css`, `.scss`, `.less`
 - **JavaScript**: `.js`, `.ts`, `.jsx`, `.tsx`
 - **Frameworks**: `.vue`, `.svelte`
@@ -241,6 +249,7 @@ Report issues on [GitHub](https://github.com/exprays/greenlightci/issues)
 ## 🙏 Credits
 
 Built with:
+
 - [Commander.js](https://github.com/tj/commander.js) - CLI framework
 - [Chalk](https://github.com/chalk/chalk) - Terminal colors
 - [Ora](https://github.com/sindresorhus/ora) - Terminal spinners
