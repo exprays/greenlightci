@@ -11,7 +11,7 @@ export function parsePRDiff(diffContent: string): File[] {
     }
 
     const files = parseDiff(diffContent);
-    
+
     if (!files || files.length === 0) {
       return [];
     }
@@ -21,7 +21,7 @@ export function parsePRDiff(diffContent: string): File[] {
     if (error instanceof ParseError) {
       throw error;
     }
-    
+
     throw new ParseError(
       `Failed to parse PR diff: ${error instanceof Error ? error.message : String(error)}`,
       { contentLength: diffContent?.length || 0 }
