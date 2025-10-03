@@ -139,7 +139,7 @@ export async function checkCommand(
       console.log(JSON.stringify(result, null, 2));
     } else {
       printHeader('🚦 GreenLightCI - Baseline Compatibility Check');
-      
+
       // Print file results
       for (const fileResult of fileResults) {
         if (fileResult.issues.length > 0 || options.verbose) {

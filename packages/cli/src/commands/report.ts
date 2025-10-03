@@ -149,8 +149,8 @@ function generateHTMLReport(
     summary.averageScore >= 80
       ? '#22c55e'
       : summary.averageScore >= 60
-      ? '#eab308'
-      : '#ef4444';
+        ? '#eab308'
+        : '#ef4444';
 
   return `<!DOCTYPE html>
 <html lang="en">
