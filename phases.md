@@ -1,9 +1,9 @@
 # 🚀 GreenLightCI Development Phases
 
 **Project**: Baseline Tooling Hackathon - CI/CD Compatibility Checker  
-**Timeline**: 4 Days  
-**Team Size**: Assumed 1-2 developers  
-**Submission Deadline**: Day 4 EOD
+**Timeline**: 4 Days ( fixed by us )  
+**Team Size**: 2
+**Submission Deadline**: Oct 6 GMT+05.30
 
 ## 📋 **Project Overview**
 
