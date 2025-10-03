@@ -33,7 +33,7 @@ export async function getPRDiff(
     // Check cache first
     const cacheKey = getPRDiffCacheKey(owner, repo, pullNumber);
     const cached = githubCache.get(cacheKey);
-    
+
     if (cached !== undefined) {
       core.info(`Using cached diff for PR #${pullNumber}`);
       return cached;
@@ -50,7 +50,7 @@ export async function getPRDiff(
     });
 
     const diffContent = data as unknown as string;
-    
+
     // Cache the result (10 minute TTL)
     githubCache.set(cacheKey, diffContent, 600);
 
@@ -58,9 +58,9 @@ export async function getPRDiff(
   } catch (error: any) {
     const statusCode = error?.status || error?.response?.status;
     const message = error?.message || 'Unknown error';
-    
+
     core.error(`Failed to fetch PR diff: ${message}`);
-    
+
     throw new GitHubAPIError(
       `Failed to fetch PR #${pullNumber} diff: ${message}`,
       statusCode,
@@ -268,7 +268,7 @@ export async function postComment(
 ): Promise<void> {
   try {
     core.info('Posting compatibility report to PR...');
-    
+
     // Check if we already have a comment
     const { data: comments } = await octokit.rest.issues.listComments({
       owner,
@@ -288,7 +288,9 @@ export async function postComment(
         comment_id: existingComment.id,
         body,
       });
-      core.info(`✓ Updated existing compatibility comment (ID: ${existingComment.id})`);
+      core.info(
+        `✓ Updated existing compatibility comment (ID: ${existingComment.id})`
+      );
     } else {
       // Create new comment
       const { data: newComment } = await octokit.rest.issues.createComment({
@@ -302,9 +304,9 @@ export async function postComment(
   } catch (error: any) {
     const statusCode = error?.status || error?.response?.status;
     const message = error?.message || 'Unknown error';
-    
+
     core.error(`Failed to post comment: ${message}`);
-    
+
     throw new GitHubAPIError(
       `Failed to post comment on PR #${pullNumber}: ${message}`,
       statusCode,
@@ -338,9 +340,13 @@ export async function setStatus(
   } catch (error: any) {
     const statusCode = error?.status || error?.response?.status;
     const message = error?.message || 'Unknown error';
-    
+
     // Don't fail the action if we can't set status, just warn
-    core.warning(`Failed to set commit status: ${message} (status code: ${statusCode})`);
-    core.warning('This may happen if the GitHub token lacks status check permissions');
+    core.warning(
+      `Failed to set commit status: ${message} (status code: ${statusCode})`
+    );
+    core.warning(
+      'This may happen if the GitHub token lacks status check permissions'
+    );
   }
 }
