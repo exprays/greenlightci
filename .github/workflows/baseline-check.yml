@@ -1,0 +1,31 @@
+name: Baseline Compatibility Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  baseline-check:
+    name: Check Baseline Compatibility
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Baseline Compatibility Check
+        uses: ./packages/action
+        with:
+          # Target Baseline year - features must be baseline by this year
+          baseline-year: '2023'
+          
+          # Block PRs that use "Newly Available" baseline features
+          block-newly-available: false
+          
+          # Block PRs that use "Limited Availability" features
+          block-limited-availability: true
+          
+          # GitHub token for API access (automatically provided)
+          github-token: ${{ secrets.GITHUB_TOKEN }}
