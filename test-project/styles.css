@@ -1,0 +1,58 @@
+/* Test CSS file with various Baseline features */
+
+/* Container Queries - Newly Available in Baseline 2023 */
+@container (min-width: 400px) {
+  .card {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* CSS Grid - Widely Available */
+.layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* CSS Nesting - Newly Available */
+.button {
+  background: blue;
+  
+  &:hover {
+    background: darkblue;
+  }
+  
+  & .icon {
+    margin-right: 8px;
+  }
+}
+
+/* :has() Selector - Newly Available */
+.card:has(img) {
+  padding: 0;
+}
+
+/* Custom Properties - Widely Available */
+:root {
+  --primary-color: #007bff;
+  --spacing: 16px;
+}
+
+/* Subgrid - Limited Availability */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-item {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+/* Logical Properties - Widely Available */
+.box {
+  padding-inline: 20px;
+  margin-block-start: 10px;
+  border-inline-start: 2px solid black;
+}
