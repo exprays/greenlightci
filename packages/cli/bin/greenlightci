@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+
+/**
+ * GreenLightCI CLI
+ * Check Baseline web feature compatibility in your local project
+ */
+
+import { program } from 'commander';
+import { checkCommand } from '../dist/commands/check.js';
+import { watchCommand } from '../dist/commands/watch.js';
+import { reportCommand } from '../dist/commands/report.js';
+
+program
+  .name('greenlightci')
+  .description('CLI tool for Baseline web feature compatibility checking')
+  .version('1.0.0');
+
+// Check command - scan files and report compatibility
+program
+  .command('check')
+  .description('Check Baseline compatibility in your project')
+  .argument('[path]', 'Path to scan (defaults to current directory)', '.')
+  .option('-t, --target-year <year>', 'Target Baseline year', '2023')
+  .option('--block-newly', 'Block newly available features', false)
+  .option('--block-limited', 'Block limited availability features', false)
+  .option('--json', 'Output results as JSON', false)
+  .option('--verbose', 'Show detailed output', false)
+  .option('--include <patterns>', 'File patterns to include (comma-separated)', '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}')
+  .option('--exclude <patterns>', 'File patterns to exclude (comma-separated)', 'node_modules/**,dist/**,build/**')
+  .action(checkCommand);
+
+// Watch command - continuously monitor files
+program
+  .command('watch')
+  .description('Watch files for changes and check compatibility')
+  .argument('[path]', 'Path to watch (defaults to current directory)', '.')
+  .option('-t, --target-year <year>', 'Target Baseline year', '2023')
+  .option('--block-newly', 'Block newly available features', false)
+  .option('--block-limited', 'Block limited availability features', false)
+  .option('--include <patterns>', 'File patterns to include (comma-separated)', '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}')
+  .option('--exclude <patterns>', 'File patterns to exclude (comma-separated)', 'node_modules/**,dist/**,build/**')
+  .action(watchCommand);
+
+// Report command - generate detailed compatibility report
+program
+  .command('report')
+  .description('Generate a detailed compatibility report')
+  .argument('[path]', 'Path to scan (defaults to current directory)', '.')
+  .option('-t, --target-year <year>', 'Target Baseline year', '2023')
+  .option('-o, --output <file>', 'Output file path (HTML or JSON)', 'baseline-report.html')
+  .option('--format <type>', 'Output format (html or json)', 'html')
+  .option('--include <patterns>', 'File patterns to include (comma-separated)', '**/*.{css,scss,js,ts,jsx,tsx,vue,svelte}')
+  .option('--exclude <patterns>', 'File patterns to exclude (comma-separated)', 'node_modules/**,dist/**,build/**')
+  .action(reportCommand);
+
+program.parse();
