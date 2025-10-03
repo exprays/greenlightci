@@ -42,9 +42,9 @@ describe('Baseline with Caching Integration', () => {
 
     it('should return undefined for non-existent features and not cache them', () => {
       const feature = getFeatureById('non-existent-feature-xyz');
-      
+
       expect(feature).toBeUndefined();
-      
+
       // Should not cache undefined results
       const cached = featureCache.get('feature:non-existent-feature-xyz');
       expect(cached).toBeUndefined();
