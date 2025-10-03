@@ -5,8 +5,8 @@ import {
   getBrowserSupport,
   getFeatureById,
   calculateCompatibilityScore,
-  BaselineStatus,
-} from '../src/baseline';
+} from '../src/baseline.js';
+import { BaselineStatus } from '../src/types.js';
 
 describe('getBaselineStatus', () => {
   it('should return WidelyAvailable for baseline high', () => {
@@ -169,7 +169,7 @@ describe('getFeatureById', () => {
     // Note: This test depends on the web-features package having actual data
     // We'll use a commonly known feature that should exist
     const feature = getFeatureById('grid');
-    
+
     if (feature) {
       expect(feature.id).toBe('grid');
       expect(feature.name).toBeDefined();

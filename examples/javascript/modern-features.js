@@ -3,9 +3,9 @@ const user = {
   profile: {
     name: 'John',
     address: {
-      city: 'New York'
-    }
-  }
+      city: 'New York',
+    },
+  },
 };
 
 const city = user?.profile?.address?.city;
@@ -31,7 +31,7 @@ if (condition) {
 }
 
 // Top-level Await Example
-const config = await fetch('/api/config').then(r => r.json());
+const config = await fetch('/api/config').then((r) => r.json());
 const data = await import('./data.json');
 
 console.log('Config loaded:', config);
@@ -40,24 +40,24 @@ console.log('Config loaded:', config);
 class UserAccount {
   #balance = 0;
   #accountNumber;
-  
+
   constructor(accountNumber) {
     this.#accountNumber = accountNumber;
   }
-  
+
   deposit(amount) {
     this.#balance += amount;
     return this.#getBalance();
   }
-  
+
   #getBalance() {
     return this.#balance;
   }
-  
+
   getPublicInfo() {
     return {
       accountNumber: this.#accountNumber,
-      balance: this.#balance
+      balance: this.#balance,
     };
   }
 }
@@ -66,23 +66,23 @@ class UserAccount {
 class ModernComponent {
   #state = null;
   #subscribers = [];
-  
+
   constructor(initialState) {
     this.#state = initialState ?? {};
   }
-  
+
   async loadData() {
     const module = await import('./data-loader.js');
     const data = await module.fetchData();
-    
+
     this.#state = data?.results?.[0] ?? this.#state;
     this.#notifySubscribers();
   }
-  
+
   #notifySubscribers() {
-    this.#subscribers.forEach(callback => callback?.(this.#state));
+    this.#subscribers.forEach((callback) => callback?.(this.#state));
   }
-  
+
   subscribe(callback) {
     if (callback) {
       this.#subscribers.push(callback);

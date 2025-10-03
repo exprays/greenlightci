@@ -31,15 +31,15 @@
 /* CSS Nesting Example */
 .component {
   padding: 1rem;
-  
+
   & .header {
     font-size: 2rem;
-    
+
     & .title {
       font-weight: bold;
     }
   }
-  
+
   & .content {
     margin-top: 1rem;
   }
@@ -73,7 +73,7 @@
     grid-template-columns: subgrid;
     gap: var(--spacing-unit);
     margin-inline: auto;
-    
+
     &:has(.featured) {
       border: 2px solid var(--primary-color);
     }

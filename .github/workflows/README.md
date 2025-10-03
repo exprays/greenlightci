@@ -59,23 +59,23 @@ jobs:
 
 ## Configuration Options
 
-| Input | Description | Default | Required |
-|-------|-------------|---------|----------|
-| `baseline-year` | Target Baseline year | `'2023'` | No |
-| `block-newly-available` | Block PRs with newly available features | `false` | No |
-| `block-limited-availability` | Block PRs with limited availability | `true` | No |
-| `github-token` | GitHub token for API access | `${{ github.token }}` | No |
-| `custom-browser-targets` | Custom browser version requirements (JSON) | - | No |
+| Input                        | Description                                | Default               | Required |
+| ---------------------------- | ------------------------------------------ | --------------------- | -------- |
+| `baseline-year`              | Target Baseline year                       | `'2023'`              | No       |
+| `block-newly-available`      | Block PRs with newly available features    | `false`               | No       |
+| `block-limited-availability` | Block PRs with limited availability        | `true`                | No       |
+| `github-token`               | GitHub token for API access                | `${{ github.token }}` | No       |
+| `custom-browser-targets`     | Custom browser version requirements (JSON) | -                     | No       |
 
 ## Outputs
 
 The action provides the following outputs that can be used in subsequent steps:
 
-| Output | Description | Example |
-|--------|-------------|---------|
-| `compatibility-score` | Overall score (0-100) | `87` |
-| `features-detected` | Number of features found | `12` |
-| `blocking-issues` | Number of blocking problems | `2` |
+| Output                | Description                 | Example |
+| --------------------- | --------------------------- | ------- |
+| `compatibility-score` | Overall score (0-100)       | `87`    |
+| `features-detected`   | Number of features found    | `12`    |
+| `blocking-issues`     | Number of blocking problems | `2`     |
 
 ### Using Outputs
 
@@ -100,10 +100,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run Tests
         run: npm test
-      
+
       - name: Check Baseline
         uses: greenlightci/baseline-action@v1
         with:
@@ -118,18 +118,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Install Dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Baseline Check
         uses: greenlightci/baseline-action@v1
 ```
@@ -146,7 +146,7 @@ jobs:
         with:
           baseline-year: '2024'
           block-newly-available: true
-  
+
   lenient-check:
     runs-on: ubuntu-latest
     steps:
@@ -179,6 +179,7 @@ jobs:
 ## Support
 
 For more examples and documentation, visit:
+
 - [GitHub Repository](https://github.com/your-org/greenlightci)
 - [Documentation](https://greenlightci.dev/docs)
 - [Issue Tracker](https://github.com/your-org/greenlightci/issues)

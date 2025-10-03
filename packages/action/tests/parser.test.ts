@@ -60,7 +60,7 @@ index 1234567..abcdefg 100644
 
     const files = parsePRDiff(diff);
     const addedLines = getAddedLines(files[0]!);
-    
+
     expect(addedLines).toHaveLength(2);
     expect(addedLines[0]?.content).toContain('grid');
     expect(addedLines[1]?.content).toContain('subgrid');
@@ -77,7 +77,7 @@ index 1234567..abcdefg 100644
 
     const files = parsePRDiff(diff);
     const addedLines = getAddedLines(files[0]!);
-    
+
     expect(addedLines[0]?.line).toBe(6);
     expect(addedLines[1]?.line).toBe(7);
   });

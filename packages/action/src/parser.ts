@@ -1,8 +1,4 @@
 import parseDiff, { File } from 'parse-diff';
-import {
-  CSS_FEATURE_PATTERNS,
-  JS_FEATURE_PATTERNS,
-} from '@greenlightci/shared';
 
 /**
  * Parse diff content and extract file changes
@@ -50,37 +46,37 @@ export function detectCSSFeatures(content: string): string[] {
   const detected: Set<string> = new Set();
 
   // Check for container queries
-  if (CSS_FEATURE_PATTERNS.CONTAINER_QUERIES.test(content)) {
+  if (/@container|container-type|container-name/gi.test(content)) {
     detected.add('container-queries');
   }
 
   // Check for :has() selector
-  if (CSS_FEATURE_PATTERNS.HAS_SELECTOR.test(content)) {
+  if (/:has\(/gi.test(content)) {
     detected.add('has');
   }
 
   // Check for CSS Grid
-  if (CSS_FEATURE_PATTERNS.CSS_GRID.test(content)) {
+  if (/display:\s*grid|grid-template/gi.test(content)) {
     detected.add('grid');
   }
 
   // Check for Subgrid
-  if (CSS_FEATURE_PATTERNS.SUBGRID.test(content)) {
+  if (/subgrid/gi.test(content)) {
     detected.add('subgrid');
   }
 
   // Check for CSS Nesting
-  if (CSS_FEATURE_PATTERNS.CSS_NESTING.test(content)) {
+  if (/&\s*\{|&\s+\./gi.test(content)) {
     detected.add('css-nesting');
   }
 
   // Check for Custom Properties
-  if (CSS_FEATURE_PATTERNS.CUSTOM_PROPERTIES.test(content)) {
+  if (/var\(--/gi.test(content)) {
     detected.add('custom-properties');
   }
 
   // Check for Logical Properties
-  if (CSS_FEATURE_PATTERNS.LOGICAL_PROPERTIES.test(content)) {
+  if (/inline-start|inline-end|block-start|block-end/gi.test(content)) {
     detected.add('logical-properties');
   }
 
@@ -94,27 +90,27 @@ export function detectJSFeatures(content: string): string[] {
   const detected: Set<string> = new Set();
 
   // Check for optional chaining
-  if (JS_FEATURE_PATTERNS.OPTIONAL_CHAINING.test(content)) {
+  if (/\?\./g.test(content)) {
     detected.add('optional-chaining');
   }
 
   // Check for nullish coalescing
-  if (JS_FEATURE_PATTERNS.NULLISH_COALESCING.test(content)) {
+  if (/\?\?/g.test(content)) {
     detected.add('nullish-coalescing');
   }
 
   // Check for dynamic import
-  if (JS_FEATURE_PATTERNS.DYNAMIC_IMPORT.test(content)) {
+  if (/import\(/g.test(content)) {
     detected.add('dynamic-import');
   }
 
   // Check for top-level await
-  if (JS_FEATURE_PATTERNS.TOP_LEVEL_AWAIT.test(content)) {
+  if (/^(?!.*function).*await\s+/gm.test(content)) {
     detected.add('top-level-await');
   }
 
   // Check for private fields
-  if (JS_FEATURE_PATTERNS.PRIVATE_FIELDS.test(content)) {
+  if (/#[a-zA-Z_]/g.test(content)) {
     detected.add('private-fields');
   }
 
