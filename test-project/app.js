@@ -3,8 +3,8 @@
 // Optional Chaining - Widely Available in Baseline 2023
 const user = {
   profile: {
-    name: 'John'
-  }
+    name: 'John',
+  },
 };
 console.log(user?.profile?.name);
 console.log(user?.settings?.theme);
@@ -26,11 +26,11 @@ const json = await data.json();
 // Private Fields - Newly Available
 class Counter {
   #count = 0;
-  
+
   increment() {
     this.#count++;
   }
-  
+
   getCount() {
     return this.#count;
   }
@@ -38,11 +38,13 @@ class Counter {
 
 // Array methods - checking newer features
 const numbers = [1, 2, 3, 4, 5];
-const doubled = numbers.map(n => n * 2);
+const doubled = numbers.map((n) => n * 2);
 const sum = numbers.reduce((a, b) => a + b, 0);
 
 // Object destructuring - Widely Available
-const { profile: { name } } = user;
+const {
+  profile: { name },
+} = user;
 
 // Spread operator - Widely Available
 const newUser = { ...user, id: 123 };
@@ -53,13 +55,13 @@ const greeting = `Hello, ${name}!`;
 
 // Arrow functions - Widely Available
 const add = (a, b) => a + b;
-const square = x => x * x;
+const square = (x) => x * x;
 
 // Promises - Widely Available
 fetch('/api/users')
-  .then(response => response.json())
-  .then(users => console.log(users))
-  .catch(error => console.error(error));
+  .then((response) => response.json())
+  .then((users) => console.log(users))
+  .catch((error) => console.error(error));
 
 // Async/Await - Widely Available
 async function getUsers() {

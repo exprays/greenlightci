@@ -18,11 +18,11 @@
 /* CSS Nesting - Newly Available */
 .button {
   background: blue;
-  
+
   &:hover {
     background: darkblue;
   }
-  
+
   & .icon {
     margin-right: 8px;
   }
