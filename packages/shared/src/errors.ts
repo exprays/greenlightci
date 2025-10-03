@@ -125,10 +125,10 @@ export function wrapError(
 /**
  * Check if error is of a specific type
  */
-export function isErrorType(
+export function isErrorType<T extends GreenLightError>(
   error: unknown,
-  errorClass: typeof GreenLightError
-): boolean {
+  errorClass: new (...args: any[]) => T
+): error is T {
   return error instanceof errorClass;
 }
 
