@@ -8,6 +8,8 @@ import {
   getFeatureById,
   calculateCompatibilityScore,
   ACTION_OUTPUTS,
+  parseCustomTargets,
+  isCompatibleWithTargets,
 } from '@greenlightci/shared';
 import { getOctokit, getPRDiff, postComment, setStatus } from './github.js';
 import { parsePRDiff, getAddedLines, detectFeatures } from './parser.js';
@@ -18,12 +20,18 @@ import { parsePRDiff, getAddedLines, detectFeatures } from './parser.js';
 export async function run(): Promise<void> {
   try {
     // Get inputs
+    const customTargetsInput = core.getInput('custom-browser-targets');
+    const customTargets = customTargetsInput
+      ? parseCustomTargets(customTargetsInput)
+      : null;
+
     const config: BaselineConfig = {
       targetYear: core.getInput('baseline-year') || '2023',
       blockNewlyAvailable: core.getBooleanInput('block-newly-available'),
       blockLimitedAvailability: core.getBooleanInput(
         'block-limited-availability'
       ),
+      ...(customTargets ? { customTargets } : {}),
     };
 
     const githubToken = core.getInput('github-token', { required: true });
@@ -32,6 +40,11 @@ export async function run(): Promise<void> {
     core.info(`Target Year: ${config.targetYear}`);
     core.info(`Block Newly Available: ${config.blockNewlyAvailable}`);
     core.info(`Block Limited Availability: ${config.blockLimitedAvailability}`);
+    if (customTargets) {
+      core.info(
+        `Custom Browser Targets: ${JSON.stringify(customTargets, null, 2)}`
+      );
+    }
 
     // Get PR context
     const context = github.context;
@@ -99,23 +112,38 @@ export async function run(): Promise<void> {
         let severity: 'error' | 'warning' | 'info' = 'info';
         let blocking = false;
 
-        if (feature.status === BaselineStatus.WidelyAvailable) {
-          widelyCount++;
-        } else if (feature.status === BaselineStatus.NewlyAvailable) {
-          newlyCount++;
-          severity = 'warning';
-          blocking = config.blockNewlyAvailable;
-        } else if (
-          feature.status === BaselineStatus.Limited ||
-          feature.status === BaselineStatus.NotBaseline
-        ) {
-          if (feature.status === BaselineStatus.Limited) {
-            limitedCount++;
-          } else {
-            notBaselineCount++;
+        // Check custom browser targets if provided
+        if (customTargets) {
+          const compat = isCompatibleWithTargets(feature.support, customTargets);
+          if (!compat.compatible) {
+            severity = 'error';
+            blocking = true;
+            core.warning(
+              `Feature "${feature.name}" is not compatible with custom targets: ${compat.incompatibleBrowsers.join(', ')}`
+            );
           }
-          severity = 'error';
-          blocking = config.blockLimitedAvailability;
+        }
+
+        // Apply baseline status rules if not already blocked by custom targets
+        if (!blocking) {
+          if (feature.status === BaselineStatus.WidelyAvailable) {
+            widelyCount++;
+          } else if (feature.status === BaselineStatus.NewlyAvailable) {
+            newlyCount++;
+            severity = 'warning';
+            blocking = config.blockNewlyAvailable;
+          } else if (
+            feature.status === BaselineStatus.Limited ||
+            feature.status === BaselineStatus.NotBaseline
+          ) {
+            if (feature.status === BaselineStatus.Limited) {
+              limitedCount++;
+            } else {
+              notBaselineCount++;
+            }
+            severity = 'error';
+            blocking = config.blockLimitedAvailability;
+          }
         }
 
         results.push({
