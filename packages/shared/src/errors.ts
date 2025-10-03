@@ -112,22 +112,14 @@ export function wrapError(
   }
 
   if (error instanceof Error) {
-    return new GreenLightError(
-      `${message}: ${error.message}`,
-      code,
-      {
-        ...details,
-        originalError: error.message,
-        originalStack: error.stack,
-      }
-    );
+    return new GreenLightError(`${message}: ${error.message}`, code, {
+      ...details,
+      originalError: error.message,
+      originalStack: error.stack,
+    });
   }
 
-  return new GreenLightError(
-    `${message}: ${String(error)}`,
-    code,
-    details
-  );
+  return new GreenLightError(`${message}: ${String(error)}`, code, details);
 }
 
 /**
@@ -145,9 +137,7 @@ export function isErrorType(
  */
 export function formatErrorForLog(error: unknown): string {
   if (error instanceof GreenLightError) {
-    const parts = [
-      `[${error.code}] ${error.message}`,
-    ];
+    const parts = [`[${error.code}] ${error.message}`];
 
     if (error.details && Object.keys(error.details).length > 0) {
       parts.push(`Details: ${JSON.stringify(error.details, null, 2)}`);

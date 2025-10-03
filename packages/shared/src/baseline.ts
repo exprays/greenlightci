@@ -1,5 +1,7 @@
 import features from 'web-features';
 import { BaselineFeature, BaselineStatus, BrowserSupport } from './types.js';
+import { featureCache, getFeatureCacheKey } from './cache.js';
+import { wrapError } from './errors.js';
 
 /**
  * Get baseline status from web-features data
@@ -89,29 +91,52 @@ export function getAllBaselineFeatures(): Map<string, BaselineFeature> {
 }
 
 /**
- * Find feature by ID
+ * Find feature by ID (with caching)
  */
 export function getFeatureById(featureId: string): BaselineFeature | undefined {
-  const featureData = (features as any)[featureId];
+  try {
+    // Check cache first
+    const cacheKey = getFeatureCacheKey(featureId);
+    const cached = featureCache.get(cacheKey);
 
-  if (!featureData) {
-    return undefined;
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    // Fetch from web-features
+    const featureData = (features as any)[featureId];
+
+    if (!featureData) {
+      return undefined;
+    }
+
+    const status = getBaselineStatus(featureData);
+    const baselineYear = getBaselineYear(featureData);
+    const support = getBrowserSupport(featureData);
+
+    const feature: BaselineFeature = {
+      id: featureId,
+      name: featureData.name || featureId,
+      description: featureData.description,
+      status,
+      ...(baselineYear ? { baselineYear } : {}),
+      support,
+      mdnUrl: featureData.mdn_url,
+      specUrl: featureData.spec,
+    };
+
+    // Cache the result (24 hour TTL)
+    featureCache.set(cacheKey, feature, 86400);
+
+    return feature;
+  } catch (error) {
+    throw wrapError(
+      error,
+      `Failed to get feature by ID: ${featureId}`,
+      'FEATURE_LOOKUP_ERROR',
+      { featureId }
+    );
   }
-
-  const status = getBaselineStatus(featureData);
-  const baselineYear = getBaselineYear(featureData);
-  const support = getBrowserSupport(featureData);
-
-  return {
-    id: featureId,
-    name: featureData.name || featureId,
-    description: featureData.description,
-    status,
-    ...(baselineYear ? { baselineYear } : {}),
-    support,
-    mdnUrl: featureData.mdn_url,
-    specUrl: featureData.spec,
-  };
 }
 
 /**
