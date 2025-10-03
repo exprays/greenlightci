@@ -10,20 +10,49 @@ import {
   ACTION_OUTPUTS,
   parseCustomTargets,
   isCompatibleWithTargets,
+  ConfigurationError,
+  GitHubAPIError,
+  ParseError,
+  FeatureDetectionError,
+  getUserFriendlyError,
+  formatErrorForLog,
+  getCacheStats,
+  pruneAllCaches,
 } from '@greenlightci/shared';
 import { getOctokit, getPRDiff, postComment, setStatus } from './github.js';
 import { parsePRDiff, getAddedLines, detectFeatures } from './parser.js';
 
 /**
- * Main action entry point
+ * Main action entry point with comprehensive error handling
  */
 export async function run(): Promise<void> {
   try {
-    // Get inputs
+    core.info('🚦 GreenLightCI - Baseline Compatibility Checker');
+    core.info('================================================');
+
+    // Validate inputs and configuration
+    const githubToken = core.getInput('github-token', { required: true });
+    if (!githubToken) {
+      throw new ConfigurationError(
+        'github-token is required but was not provided'
+      );
+    }
+
+    // Get inputs with validation
     const customTargetsInput = core.getInput('custom-browser-targets');
-    const customTargets = customTargetsInput
-      ? parseCustomTargets(customTargetsInput)
-      : null;
+    let customTargets = null;
+
+    if (customTargetsInput) {
+      try {
+        customTargets = parseCustomTargets(customTargetsInput);
+        core.info(`✓ Custom browser targets parsed successfully`);
+      } catch (error) {
+        throw new ConfigurationError(
+          `Invalid custom-browser-targets format: ${error instanceof Error ? error.message : String(error)}`,
+          { input: customTargetsInput }
+        );
+      }
+    }
 
     const config: BaselineConfig = {
       targetYear: core.getInput('baseline-year') || '2023',
@@ -33,8 +62,6 @@ export async function run(): Promise<void> {
       ),
       ...(customTargets ? { customTargets } : {}),
     };
-
-    const githubToken = core.getInput('github-token', { required: true });
 
     core.info(`Starting Baseline compatibility check...`);
     core.info(`Target Year: ${config.targetYear}`);
@@ -114,7 +141,10 @@ export async function run(): Promise<void> {
 
         // Check custom browser targets if provided
         if (customTargets) {
-          const compat = isCompatibleWithTargets(feature.support, customTargets);
+          const compat = isCompatibleWithTargets(
+            feature.support,
+            customTargets
+          );
           if (!compat.compatible) {
             severity = 'error';
             blocking = true;
@@ -212,11 +242,55 @@ export async function run(): Promise<void> {
       );
       core.info('✅ All checks passed!');
     }
+
+    // Log cache statistics
+    const cacheStats = getCacheStats();
+    core.info(`📊 Cache Statistics:`);
+    core.info(`  Features: ${cacheStats.features.entries} entries`);
+    core.info(`  GitHub API: ${cacheStats.github.entries} entries`);
+    core.info(`  Diffs: ${cacheStats.diff.entries} entries`);
+
+    // Prune expired cache entries
+    pruneAllCaches();
   } catch (error) {
-    if (error instanceof Error) {
+    // Enhanced error handling with detailed logging
+    core.error('❌ GreenLightCI encountered an error');
+
+    // Log detailed error information
+    const errorLog = formatErrorForLog(error);
+    core.error(errorLog);
+
+    // Set user-friendly error message
+    const userMessage = getUserFriendlyError(error);
+
+    // Handle specific error types
+    if (error instanceof ConfigurationError) {
+      core.error(
+        '💡 Configuration Error: Please check your workflow configuration'
+      );
+      core.setFailed(`Configuration error: ${userMessage}`);
+    } else if (error instanceof GitHubAPIError) {
+      core.error(
+        '💡 GitHub API Error: Check your token permissions and rate limits'
+      );
+      core.setFailed(`GitHub API error: ${userMessage}`);
+    } else if (error instanceof ParseError) {
+      core.error('💡 Parse Error: Failed to parse PR diff');
+      core.setFailed(`Parse error: ${userMessage}`);
+    } else if (error instanceof FeatureDetectionError) {
+      core.error('💡 Feature Detection Error: Failed to detect features');
+      core.setFailed(`Feature detection error: ${userMessage}`);
+    } else if (error instanceof Error) {
       core.setFailed(error.message);
     } else {
       core.setFailed('An unknown error occurred');
+    }
+
+    // Attempt to clean up caches on error
+    try {
+      pruneAllCaches();
+    } catch {
+      // Ignore cache cleanup errors
     }
   }
 }

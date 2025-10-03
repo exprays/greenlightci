@@ -8,6 +8,9 @@ import {
   BaselineStatus,
   getPolyfillSuggestion,
   formatPolyfillSuggestion,
+  githubCache,
+  getPRDiffCacheKey,
+  GitHubAPIError,
 } from '@greenlightci/shared';
 
 /**
@@ -18,7 +21,7 @@ export function getOctokit(token: string): Octokit {
 }
 
 /**
- * Get PR diff content
+ * Get PR diff content (with caching and error handling)
  */
 export async function getPRDiff(
   octokit: Octokit,
@@ -27,6 +30,16 @@ export async function getPRDiff(
   pullNumber: number
 ): Promise<string> {
   try {
+    // Check cache first
+    const cacheKey = getPRDiffCacheKey(owner, repo, pullNumber);
+    const cached = githubCache.get(cacheKey);
+    
+    if (cached !== undefined) {
+      core.info(`Using cached diff for PR #${pullNumber}`);
+      return cached;
+    }
+
+    core.info(`Fetching diff for PR #${pullNumber}...`);
     const { data } = await octokit.rest.pulls.get({
       owner,
       repo,
@@ -36,10 +49,23 @@ export async function getPRDiff(
       },
     });
 
-    return data as unknown as string;
-  } catch (error) {
-    core.error(`Failed to fetch PR diff: ${error}`);
-    throw error;
+    const diffContent = data as unknown as string;
+    
+    // Cache the result (10 minute TTL)
+    githubCache.set(cacheKey, diffContent, 600);
+
+    return diffContent;
+  } catch (error: any) {
+    const statusCode = error?.status || error?.response?.status;
+    const message = error?.message || 'Unknown error';
+    
+    core.error(`Failed to fetch PR diff: ${message}`);
+    
+    throw new GitHubAPIError(
+      `Failed to fetch PR #${pullNumber} diff: ${message}`,
+      statusCode,
+      { owner, repo, pullNumber }
+    );
   }
 }
 
@@ -69,7 +95,10 @@ export function formatComment(report: CompatibilityReport): string {
   if (results.length === 0) {
     comment += `> ✅ **Great news!** No web features detected in this PR that require compatibility checking.\n\n`;
     comment += `This PR doesn't introduce any new web platform features that need baseline validation.\n`;
-    return comment + `\n---\n🤖 *Powered by [GreenLightCI](https://github.com/your-org/greenlightci)*\n`;
+    return (
+      comment +
+      `\n---\n🤖 *Powered by [GreenLightCI](https://github.com/your-org/greenlightci)*\n`
+    );
   }
 
   // Group results by severity
@@ -141,7 +170,7 @@ function formatFeatureResult(result: CompatibilityResult): string {
   const statusEmoji = getStatusEmoji(feature.status);
 
   let output = `#### ${statusEmoji} \`${feature.name}\`\n\n`;
-  
+
   // Status badge with color
   const statusBadge = getStatusBadge(feature.status, feature.baselineYear);
   output += `${statusBadge}\n\n`;
@@ -228,7 +257,7 @@ function getStatusEmoji(status: BaselineStatus): string {
 }
 
 /**
- * Post or update comment on PR
+ * Post or update comment on PR (with enhanced error handling)
  */
 export async function postComment(
   octokit: Octokit,
@@ -238,6 +267,8 @@ export async function postComment(
   body: string
 ): Promise<void> {
   try {
+    core.info('Posting compatibility report to PR...');
+    
     // Check if we already have a comment
     const { data: comments } = await octokit.rest.issues.listComments({
       owner,
@@ -257,25 +288,33 @@ export async function postComment(
         comment_id: existingComment.id,
         body,
       });
-      core.info('Updated existing baseline compatibility comment');
+      core.info(`✓ Updated existing compatibility comment (ID: ${existingComment.id})`);
     } else {
       // Create new comment
-      await octokit.rest.issues.createComment({
+      const { data: newComment } = await octokit.rest.issues.createComment({
         owner,
         repo,
         issue_number: pullNumber,
         body,
       });
-      core.info('Created new baseline compatibility comment');
+      core.info(`✓ Created new compatibility comment (ID: ${newComment.id})`);
     }
-  } catch (error) {
-    core.error(`Failed to post comment: ${error}`);
-    throw error;
+  } catch (error: any) {
+    const statusCode = error?.status || error?.response?.status;
+    const message = error?.message || 'Unknown error';
+    
+    core.error(`Failed to post comment: ${message}`);
+    
+    throw new GitHubAPIError(
+      `Failed to post comment on PR #${pullNumber}: ${message}`,
+      statusCode,
+      { owner, repo, pullNumber, commentLength: body.length }
+    );
   }
 }
 
 /**
- * Set PR status check
+ * Set PR status check (with enhanced error handling)
  */
 export async function setStatus(
   octokit: Octokit,
@@ -295,7 +334,13 @@ export async function setStatus(
       description,
       target_url: `https://github.com/${owner}/${repo}/actions`,
     });
-  } catch (error) {
-    core.warning(`Failed to set status: ${error}`);
+    core.info(`✓ Set status to "${state}": ${description}`);
+  } catch (error: any) {
+    const statusCode = error?.status || error?.response?.status;
+    const message = error?.message || 'Unknown error';
+    
+    // Don't fail the action if we can't set status, just warn
+    core.warning(`Failed to set commit status: ${message} (status code: ${statusCode})`);
+    core.warning('This may happen if the GitHub token lacks status check permissions');
   }
 }
