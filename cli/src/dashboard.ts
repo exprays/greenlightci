@@ -4,7 +4,7 @@
  */
 
 import { ScanResult, FeatureIssue } from "./types.js";
-import * as path from 'path';
+import * as path from "path";
 
 export interface DashboardConfig {
   url: string;
@@ -40,8 +40,8 @@ export interface DashboardScanData {
   features: Array<{
     featureId: string;
     featureName: string;
-    status: 'widely' | 'newly' | 'limited';
-    severity: 'info' | 'warning' | 'error';
+    status: "widely" | "newly" | "limited";
+    severity: "info" | "warning" | "error";
     message?: string;
     polyfill?: string;
   }>;
@@ -54,17 +54,23 @@ export async function sendToDashboard(
   result: ScanResult,
   config: DashboardConfig,
   scanPath: string,
-  options: { targetYear: string; blockNewly: boolean; blockLimited: boolean; branch?: string; commit?: string }
+  options: {
+    targetYear: string;
+    blockNewly: boolean;
+    blockLimited: boolean;
+    branch?: string;
+    commit?: string;
+  }
 ): Promise<boolean> {
   try {
     // Extract project info from path (simplistic for now)
     const projectName = path.basename(path.resolve(scanPath));
     const owner = "local"; // Default for CLI scans
     const repo = projectName;
-    
+
     // Collect all unique features from all files
     const featureMap = new Map<string, FeatureIssue>();
-    
+
     for (const file of result.files) {
       for (const issue of file.issues) {
         // Use featureId as key to avoid duplicates
@@ -103,7 +109,7 @@ export async function sendToDashboard(
       features: Array.from(featureMap.values()).map((issue) => ({
         featureId: issue.featureId,
         featureName: issue.featureName,
-        status: issue.status as 'widely' | 'newly' | 'limited',
+        status: issue.status as "widely" | "newly" | "limited",
         severity: issue.severity,
         message: issue.message,
         polyfill: undefined, // We don't track polyfills in CLI yet
@@ -112,7 +118,7 @@ export async function sendToDashboard(
 
     // Send to dashboard
     console.log("DEBUG: Sending data:", JSON.stringify(dashboardData, null, 2));
-    
+
     const response = await fetch(`${config.url}/api/scans`, {
       method: "POST",
       headers: {
@@ -130,7 +136,10 @@ export async function sendToDashboard(
       return false;
     }
 
-    const responseData = (await response.json()) as { scanId?: string; projectId?: string };
+    const responseData = (await response.json()) as {
+      scanId?: string;
+      projectId?: string;
+    };
     console.log(
       `✓ Scan data sent to dashboard (Scan ID: ${responseData.scanId || "N/A"})`
     );

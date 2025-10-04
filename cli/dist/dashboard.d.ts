@@ -36,8 +36,8 @@ export interface DashboardScanData {
     features: Array<{
         featureId: string;
         featureName: string;
-        status: 'widely' | 'newly' | 'limited';
-        severity: 'info' | 'warning' | 'error';
+        status: "widely" | "newly" | "limited";
+        severity: "info" | "warning" | "error";
         message?: string;
         polyfill?: string;
     }>;

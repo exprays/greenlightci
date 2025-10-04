@@ -172,18 +172,13 @@ export async function checkCommand(
 
     if (dashboardConfig) {
       console.log("\n📊 Sending scan data to dashboard...");
-      const sent = await sendToDashboard(
-        result,
-        dashboardConfig,
-        path,
-        {
-          targetYear: options.targetYear,
-          blockNewly: options.blockNewly,
-          blockLimited: options.blockLimited,
-          branch: "main", // TODO: Extract from git
-          commit: undefined, // TODO: Extract from git
-        }
-      );
+      const sent = await sendToDashboard(result, dashboardConfig, path, {
+        targetYear: options.targetYear,
+        blockNewly: options.blockNewly,
+        blockLimited: options.blockLimited,
+        branch: "main", // TODO: Extract from git
+        commit: undefined, // TODO: Extract from git
+      });
 
       if (!sent) {
         console.warn(

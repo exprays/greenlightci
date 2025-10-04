@@ -2,7 +2,7 @@
  * Dashboard Client
  * Send scan results to GreenLightCI Dashboard
  */
-import * as path from 'path';
+import * as path from "path";
 /**
  * Send scan results to dashboard
  */
@@ -58,6 +58,7 @@ export async function sendToDashboard(result, config, scanPath, options) {
             })),
         };
         // Send to dashboard
+        console.log("DEBUG: Sending data:", JSON.stringify(dashboardData, null, 2));
         const response = await fetch(`${config.url}/api/scans`, {
             method: "POST",
             headers: {
