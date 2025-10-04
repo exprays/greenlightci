@@ -1,7 +1,8 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "framework": "nextjs",
-    "buildCommand": "npm install -g pnpm@9 && pnpm install --no-frozen-lockfile && pnpm prisma generate && pnpm build",
-    "installCommand": "npm install -g pnpm@9 && pnpm install --no-frozen-lockfile",
-    "devCommand": "pnpm dev"
+    "buildCommand": "cd ../.. && npm install -g pnpm@9 turbo && pnpm install --no-frozen-lockfile && turbo build --filter=dashboard",
+    "installCommand": "cd ../.. && npm install -g pnpm@9 && pnpm install --no-frozen-lockfile",
+    "devCommand": "pnpm dev",
+    "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
 }
