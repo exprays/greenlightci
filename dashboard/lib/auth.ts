@@ -1,9 +1,10 @@
-import { NextAuthOptions } from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import GithubProvider from 'next-auth/providers/github';
-import prisma from './db';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import GithubProvider from "next-auth/providers/github";
+import prisma from "./db";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       id: string;
@@ -31,7 +32,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: 'database',
+    strategy: "database",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
