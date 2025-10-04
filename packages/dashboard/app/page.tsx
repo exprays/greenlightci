@@ -1,15 +1,15 @@
 import Link from 'next/link';
-import { 
-  CheckCircle2, 
-  TrendingUp, 
-  Zap, 
-  Shield, 
-  Github, 
+import {
+  CheckCircle2,
+  TrendingUp,
+  Zap,
+  Shield,
+  Github,
   Terminal,
   BarChart3,
   Eye,
   Code,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -23,17 +23,19 @@ export default function HomePage() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">GL</span>
               </div>
-              <span className="text-xl font-bold gradient-text">GreenLightCI</span>
+              <span className="text-xl font-bold gradient-text">
+                GreenLightCI
+              </span>
             </div>
             <div className="flex items-center space-x-6">
-              <Link 
-                href="https://github.com/exprays/greenlightci" 
+              <Link
+                href="https://github.com/exprays/greenlightci"
                 target="_blank"
                 className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
               >
                 <Github className="w-5 h-5" />
               </Link>
-              <Link 
+              <Link
                 href="/api/auth/signin"
                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
               >
@@ -57,18 +59,19 @@ export default function HomePage() {
             <span className="block gradient-text">Confidence</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-12">
-            Automatically check Baseline web feature compatibility in your PRs. 
-            Track adoption trends, catch breaking changes early, and ensure your code works across all modern browsers.
+            Automatically check Baseline web feature compatibility in your PRs.
+            Track adoption trends, catch breaking changes early, and ensure your
+            code works across all modern browsers.
           </p>
           <div className="flex items-center justify-center space-x-4">
-            <Link 
+            <Link
               href="/api/auth/signin/github?callbackUrl=/dashboard"
               className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
             >
               <Github className="w-5 h-5 mr-2" />
               Get Started Free
             </Link>
-            <Link 
+            <Link
               href="https://github.com/exprays/greenlightci"
               target="_blank"
               className="inline-flex items-center px-6 py-3 text-base font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
@@ -93,11 +96,17 @@ export default function HomePage() {
                   <span className="text-purple-200">$</span>
                   <span className="ml-2">greenlightci check</span>
                 </div>
-                <div className="text-purple-100">✓ Found 2 files with web features</div>
+                <div className="text-purple-100">
+                  ✓ Found 2 files with web features
+                </div>
                 <div className="mt-4">
                   <div className="text-purple-100">styles.css [91/100]</div>
-                  <div className="ml-4 text-purple-200">✓ CSS Grid - Widely Available</div>
-                  <div className="ml-4 text-yellow-300">⚠ Container Queries - Newly Available</div>
+                  <div className="ml-4 text-purple-200">
+                    ✓ CSS Grid - Widely Available
+                  </div>
+                  <div className="ml-4 text-yellow-300">
+                    ⚠ Container Queries - Newly Available
+                  </div>
                 </div>
               </div>
             </div>
@@ -126,7 +135,8 @@ export default function HomePage() {
               GitHub Action
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Automatic compatibility checks on every PR. Get instant feedback with detailed comments showing which features are safe to use.
+              Automatic compatibility checks on every PR. Get instant feedback
+              with detailed comments showing which features are safe to use.
             </p>
           </div>
 
@@ -139,7 +149,8 @@ export default function HomePage() {
               CLI Tool
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Check compatibility locally during development. Watch mode for real-time feedback as you code.
+              Check compatibility locally during development. Watch mode for
+              real-time feedback as you code.
             </p>
           </div>
 
@@ -152,7 +163,8 @@ export default function HomePage() {
               Dashboard Analytics
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Track Baseline adoption trends over time. Visualize compatibility scores and feature usage across your projects.
+              Track Baseline adoption trends over time. Visualize compatibility
+              scores and feature usage across your projects.
             </p>
           </div>
 
@@ -165,7 +177,8 @@ export default function HomePage() {
               Smart Suggestions
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Get polyfill recommendations for features with limited support. Know exactly what to add for better compatibility.
+              Get polyfill recommendations for features with limited support.
+              Know exactly what to add for better compatibility.
             </p>
           </div>
 
@@ -178,7 +191,8 @@ export default function HomePage() {
               Watch Mode
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Continuous monitoring of your files. Get instant feedback as you develop without manual checks.
+              Continuous monitoring of your files. Get instant feedback as you
+              develop without manual checks.
             </p>
           </div>
 
@@ -191,7 +205,8 @@ export default function HomePage() {
               Configurable Rules
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Set custom blocking rules for your team. Choose target years and strictness levels that match your requirements.
+              Set custom blocking rules for your team. Choose target years and
+              strictness levels that match your requirements.
             </p>
           </div>
         </div>
@@ -217,7 +232,8 @@ export default function HomePage() {
               Install the GitHub Action
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Add GreenLightCI to your workflow file. It takes less than 2 minutes to set up.
+              Add GreenLightCI to your workflow file. It takes less than 2
+              minutes to set up.
             </p>
           </div>
 
@@ -229,7 +245,8 @@ export default function HomePage() {
               Open a Pull Request
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Make changes to your code. The action automatically detects web features in your diff.
+              Make changes to your code. The action automatically detects web
+              features in your diff.
             </p>
           </div>
 
@@ -241,7 +258,8 @@ export default function HomePage() {
               Get Instant Feedback
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Receive detailed comments showing compatibility status and recommendations.
+              Receive detailed comments showing compatibility status and
+              recommendations.
             </p>
           </div>
         </div>
@@ -254,17 +272,18 @@ export default function HomePage() {
             Ready to ship with confidence?
           </h2>
           <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
-            Join developers using GreenLightCI to ensure web feature compatibility across all modern browsers.
+            Join developers using GreenLightCI to ensure web feature
+            compatibility across all modern browsers.
           </p>
           <div className="flex items-center justify-center space-x-4">
-            <Link 
+            <Link
               href="/api/auth/signin/github?callbackUrl=/dashboard"
               className="inline-flex items-center px-6 py-3 text-base font-medium text-purple-600 bg-white rounded-lg hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl"
             >
               <Github className="w-5 h-5 mr-2" />
               Sign in with GitHub
             </Link>
-            <Link 
+            <Link
               href="https://github.com/exprays/greenlightci/blob/main/README.md"
               target="_blank"
               className="inline-flex items-center px-6 py-3 text-base font-medium text-white border-2 border-white rounded-lg hover:bg-white/10 transition-all"
@@ -283,22 +302,39 @@ export default function HomePage() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
                 <span className="text-white font-bold text-lg">GL</span>
               </div>
-              <span className="text-xl font-bold gradient-text">GreenLightCI</span>
+              <span className="text-xl font-bold gradient-text">
+                GreenLightCI
+              </span>
             </div>
             <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
-              <Link href="https://github.com/exprays/greenlightci" target="_blank" className="hover:text-gray-900 dark:hover:text-white transition-colors">
+              <Link
+                href="https://github.com/exprays/greenlightci"
+                target="_blank"
+                className="hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
                 GitHub
               </Link>
-              <Link href="https://github.com/exprays/greenlightci/blob/main/README.md" target="_blank" className="hover:text-gray-900 dark:hover:text-white transition-colors">
+              <Link
+                href="https://github.com/exprays/greenlightci/blob/main/README.md"
+                target="_blank"
+                className="hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
                 Documentation
               </Link>
-              <Link href="https://github.com/exprays/greenlightci/issues" target="_blank" className="hover:text-gray-900 dark:hover:text-white transition-colors">
+              <Link
+                href="https://github.com/exprays/greenlightci/issues"
+                target="_blank"
+                className="hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
                 Issues
               </Link>
             </div>
           </div>
           <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-500">
-            <p>Built for the Baseline Tooling Hackathon · Made with ❤️ by the community</p>
+            <p>
+              Built for the Baseline Tooling Hackathon · Made with ❤️ by the
+              community
+            </p>
           </div>
         </div>
       </footer>

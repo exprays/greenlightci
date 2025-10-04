@@ -34,7 +34,10 @@ export const authOptions: NextAuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       // Always redirect to dashboard after sign-in
-      if (url.includes('/api/auth/signin') || url.includes('/api/auth/callback')) {
+      if (
+        url.includes('/api/auth/signin') ||
+        url.includes('/api/auth/callback')
+      ) {
         return `${baseUrl}/dashboard`;
       }
       // Allows relative callback URLs
