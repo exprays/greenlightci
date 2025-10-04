@@ -1,12 +1,7 @@
-"use strict";
 /**
  * Polyfill and fallback suggestions for web features
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.POLYFILL_SUGGESTIONS = void 0;
-exports.getPolyfillSuggestion = getPolyfillSuggestion;
-exports.formatPolyfillSuggestion = formatPolyfillSuggestion;
-exports.POLYFILL_SUGGESTIONS = {
+export const POLYFILL_SUGGESTIONS = {
     'container-queries': {
         feature: 'Container Queries',
         polyfills: ['@oddbird/css-anchor-positioning'],
@@ -102,27 +97,27 @@ exports.POLYFILL_SUGGESTIONS = {
 /**
  * Get polyfill suggestion for a feature
  */
-function getPolyfillSuggestion(featureId) {
-    return exports.POLYFILL_SUGGESTIONS[featureId];
+export function getPolyfillSuggestion(featureId) {
+    return POLYFILL_SUGGESTIONS[featureId];
 }
 /**
  * Format polyfill suggestion as markdown
  */
-function formatPolyfillSuggestion(suggestion) {
-    var text = '';
+export function formatPolyfillSuggestion(suggestion) {
+    let text = '';
     if (suggestion.fallbackStrategy) {
-        text += "**\uD83D\uDCA1 Fallback Strategy:**\n".concat(suggestion.fallbackStrategy, "\n\n");
+        text += `**💡 Fallback Strategy:**\n${suggestion.fallbackStrategy}\n\n`;
     }
     if (suggestion.npmPackages && suggestion.npmPackages.length > 0) {
-        text += "**\uD83D\uDCE6 NPM Packages:**\n";
-        suggestion.npmPackages.forEach(function (pkg) {
-            text += "```bash\nnpm install ".concat(pkg, "\n```\n");
+        text += `**📦 NPM Packages:**\n`;
+        suggestion.npmPackages.forEach((pkg) => {
+            text += `\`\`\`bash\nnpm install ${pkg}\n\`\`\`\n`;
         });
     }
     if (suggestion.cdnLinks && suggestion.cdnLinks.length > 0) {
-        text += "**\uD83D\uDD17 CDN Links:**\n";
-        suggestion.cdnLinks.forEach(function (link) {
-            text += "- ".concat(link, "\n");
+        text += `**🔗 CDN Links:**\n`;
+        suggestion.cdnLinks.forEach((link) => {
+            text += `- ${link}\n`;
         });
     }
     return text;

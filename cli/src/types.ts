@@ -10,6 +10,8 @@ export interface CLIOptions {
   verbose?: boolean;
   include: string;
   exclude: string;
+  dashboardUrl?: string;
+  dashboardApiKey?: string;
 }
 
 export interface WatchOptions extends Omit<CLIOptions, 'json' | 'verbose'> {

@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaselineStatus = void 0;
 /**
  * Baseline compatibility status
  */
-var BaselineStatus;
+export var BaselineStatus;
 (function (BaselineStatus) {
     /** Feature is widely available across browsers */
     BaselineStatus["WidelyAvailable"] = "widely";
@@ -16,4 +13,4 @@ var BaselineStatus;
     BaselineStatus["NotBaseline"] = "not-baseline";
     /** Unknown status */
     BaselineStatus["Unknown"] = "unknown";
-})(BaselineStatus || (exports.BaselineStatus = BaselineStatus = {}));
+})(BaselineStatus || (BaselineStatus = {}));

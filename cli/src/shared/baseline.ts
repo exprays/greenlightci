@@ -1,11 +1,11 @@
 import features from 'web-features';
 import {
   BaselineFeature,
-  BaselineStatus,./errors.js
+  BaselineStatus,
   BrowserSupport,
 } from './types.js';
 import { featureCache, getFeatureCacheKey } from './cache.js';
-import { wrapError } from './src/errors.js';
+import { wrapError } from './errors.js';
 
 /**
  * Get baseline status from web-features data

@@ -35,6 +35,16 @@ program
     'File patterns to exclude (comma-separated)',
     'node_modules/**,dist/**,build/**'
   )
+  .option(
+    '--dashboard-url <url>',
+    'Dashboard URL to send scan results (e.g., https://greenlightci-dashboard.vercel.app)',
+    process.env.GREENLIGHTCI_DASHBOARD_URL
+  )
+  .option(
+    '--dashboard-api-key <key>',
+    'Dashboard API key for authentication',
+    process.env.GREENLIGHTCI_API_KEY
+  )
   .action(checkCommand);
 
 // Watch command - continuously monitor files

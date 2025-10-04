@@ -2,7 +2,6 @@
  * GreenLightCI CLI
  * Main entry point
  */
-
 export * from './types.js';
 export * from './scanner.js';
 export * from './output.js';

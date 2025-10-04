@@ -12,6 +12,10 @@ import {
   printFinalResult,
 } from '../output.js';
 import { CLIOptions, FileResult, FeatureIssue, ScanResult } from '../types.js';
+import {
+  sendToDashboard,
+  validateDashboardConfig,
+} from '../dashboard.js';
 
 /**
  * Check command - scan files and report compatibility
@@ -152,6 +156,29 @@ export async function checkCommand(
 
       // Print final result
       printFinalResult(result);
+    }
+
+    // Send to dashboard if configured
+    const dashboardConfig = validateDashboardConfig(
+      options.dashboardUrl,
+      options.dashboardApiKey
+    );
+
+    if (dashboardConfig) {
+      console.log('\n📊 Sending scan data to dashboard...');
+      const projectName = path.split(/[/\\]/).pop() || 'unknown-project';
+      const sent = await sendToDashboard(
+        result,
+        dashboardConfig,
+        projectName,
+        'cli-scan'
+      );
+
+      if (!sent) {
+        console.warn(
+          '⚠️  Failed to send data to dashboard. Continuing with local results.'
+        );
+      }
     }
   } catch (error) {
     spinner.fail('Scan failed');
