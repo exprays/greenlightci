@@ -123,7 +123,7 @@ export default function ApiKeysSection() {
           </div>
           <button
             onClick={() => setShowNewKeyDialog(true)}
-            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-colors"
+            className="inline-flex cursor-pointer items-center px-3 py-1.5 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-colors"
           >
             <Plus className="w-4 h-4 mr-1" />
             New Key

@@ -1,5 +1,6 @@
-import parseDiff, { File } from 'parse-diff';
-import { ParseError } from './shared';
+import * as parseDiff from "parse-diff";
+import { File } from "parse-diff";
+import { ParseError } from "./shared";
 
 /**
  * Parse diff content and extract file changes (with error handling)
@@ -7,7 +8,7 @@ import { ParseError } from './shared';
 export function parsePRDiff(diffContent: string): File[] {
   try {
     if (!diffContent || diffContent.trim().length === 0) {
-      throw new ParseError('Diff content is empty', { contentLength: 0 });
+      throw new ParseError("Diff content is empty", { contentLength: 0 });
     }
 
     const files = parseDiff(diffContent);
@@ -23,7 +24,9 @@ export function parsePRDiff(diffContent: string): File[] {
     }
 
     throw new ParseError(
-      `Failed to parse PR diff: ${error instanceof Error ? error.message : String(error)}`,
+      `Failed to parse PR diff: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
       { contentLength: diffContent?.length || 0 }
     );
   }
@@ -45,14 +48,14 @@ export function getAddedLines(
     let lineNumber = chunk.newStart || 0;
 
     for (const change of chunk.changes) {
-      if (change.type === 'add') {
+      if (change.type === "add") {
         addedLines.push({
           line: lineNumber,
-          content: change.content || '',
+          content: change.content || "",
         });
       }
 
-      if (change.type !== 'del') {
+      if (change.type !== "del") {
         lineNumber++;
       }
     }
@@ -70,37 +73,37 @@ export function detectCSSFeatures(content: string): string[] {
 
     // Check for container queries
     if (/@container|container-type|container-name/gi.test(content)) {
-      detected.add('container-queries');
+      detected.add("container-queries");
     }
 
     // Check for :has() selector
     if (/:has\(/gi.test(content)) {
-      detected.add('has');
+      detected.add("has");
     }
 
     // Check for CSS Grid
     if (/display:\s*grid|grid-template/gi.test(content)) {
-      detected.add('grid');
+      detected.add("grid");
     }
 
     // Check for Subgrid
     if (/subgrid/gi.test(content)) {
-      detected.add('subgrid');
+      detected.add("subgrid");
     }
 
     // Check for CSS Nesting
     if (/&\s*\{|&\s+\./gi.test(content)) {
-      detected.add('css-nesting');
+      detected.add("css-nesting");
     }
 
     // Check for Custom Properties
     if (/var\(--/gi.test(content)) {
-      detected.add('custom-properties');
+      detected.add("custom-properties");
     }
 
     // Check for Logical Properties
     if (/inline-start|inline-end|block-start|block-end/gi.test(content)) {
-      detected.add('logical-properties');
+      detected.add("logical-properties");
     }
 
     return Array.from(detected);
@@ -120,27 +123,27 @@ export function detectJSFeatures(content: string): string[] {
 
     // Check for optional chaining
     if (/\?\./g.test(content)) {
-      detected.add('optional-chaining');
+      detected.add("optional-chaining");
     }
 
     // Check for nullish coalescing
     if (/\?\?/g.test(content)) {
-      detected.add('nullish-coalescing');
+      detected.add("nullish-coalescing");
     }
 
     // Check for dynamic import
     if (/import\(/g.test(content)) {
-      detected.add('dynamic-import');
+      detected.add("dynamic-import");
     }
 
     // Check for top-level await
     if (/^(?!.*function).*await\s+/gm.test(content)) {
-      detected.add('top-level-await');
+      detected.add("top-level-await");
     }
 
     // Check for private fields
     if (/#[a-zA-Z_]/g.test(content)) {
-      detected.add('private-fields');
+      detected.add("private-fields");
     }
 
     return Array.from(detected);
@@ -160,24 +163,24 @@ export function detectFeatures(fileName: string, content: string): string[] {
       return [];
     }
 
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = fileName.split(".").pop()?.toLowerCase();
     const features: string[] = [];
 
-    if (extension === 'css' || extension === 'scss' || extension === 'less') {
+    if (extension === "css" || extension === "scss" || extension === "less") {
       features.push(...detectCSSFeatures(content));
     }
 
     if (
-      extension === 'js' ||
-      extension === 'ts' ||
-      extension === 'jsx' ||
-      extension === 'tsx'
+      extension === "js" ||
+      extension === "ts" ||
+      extension === "jsx" ||
+      extension === "tsx"
     ) {
       features.push(...detectJSFeatures(content));
     }
 
     // For files with both (like .vue, .svelte), check both
-    if (extension === 'vue' || extension === 'svelte') {
+    if (extension === "vue" || extension === "svelte") {
       features.push(...detectCSSFeatures(content));
       features.push(...detectJSFeatures(content));
     }

@@ -88,11 +88,11 @@ export class Cache<T> {
    */
   prune(): void {
     const now = Date.now();
-    for (const [key, entry] of this.store.entries()) {
+    this.store.forEach((entry, key) => {
       if (now > entry.expiresAt) {
         this.store.delete(key);
       }
-    }
+    });
   }
 
   /**
