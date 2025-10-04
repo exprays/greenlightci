@@ -1,6 +1,6 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd packages/dashboard && pnpm turbo build",
-  "installCommand": "pnpm install",
-  "outputDirectory": "packages/dashboard/.next"
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "buildCommand": "cd packages/dashboard && pnpm turbo build",
+    "installCommand": "pnpm install",
+    "outputDirectory": "packages/dashboard/.next"
 }
