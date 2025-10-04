@@ -2,7 +2,8 @@ import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { Badge, ScoreBadge } from '@/components/Badge';
-import { auth } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import { FolderGit2, ExternalLink, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 async function getProjects() {
@@ -20,7 +21,7 @@ async function getProjects() {
 }
 
 export default async function ProjectsPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   const projects = await getProjects();
 
   return (

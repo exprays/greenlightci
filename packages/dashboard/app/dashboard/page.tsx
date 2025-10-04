@@ -3,7 +3,8 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { StatCard } from '@/components/StatCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { Badge, ScoreBadge } from '@/components/Badge';
-import { auth } from '@/lib/auth';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import { FolderGit2, TrendingUp, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 async function getDashboardStats() {
@@ -21,7 +22,7 @@ async function getDashboardStats() {
 }
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   const stats = await getDashboardStats();
 
   return (
