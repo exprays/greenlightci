@@ -1,11 +1,7 @@
-import features from 'web-features';
-import {
-  BaselineFeature,
-  BaselineStatus,
-  BrowserSupport,
-} from './types.js';
-import { featureCache, getFeatureCacheKey } from './cache.js';
-import { wrapError } from './errors.js';
+import features from "web-features";
+import { BaselineFeature, BaselineStatus, BrowserSupport } from "./types.js";
+import { featureCache, getFeatureCacheKey } from "./cache.js";
+import { wrapError } from "./errors.js";
 
 /**
  * Get baseline status from web-features data
@@ -17,11 +13,11 @@ export function getBaselineStatus(featureData: any): BaselineStatus {
 
   const baseline = featureData.status?.baseline;
 
-  if (baseline === 'high' || baseline === 'widely') {
+  if (baseline === "high" || baseline === "widely") {
     return BaselineStatus.WidelyAvailable;
   }
 
-  if (baseline === 'low' || baseline === 'newly') {
+  if (baseline === "low" || baseline === "newly") {
     return BaselineStatus.NewlyAvailable;
   }
 
@@ -137,7 +133,7 @@ export function getFeatureById(featureId: string): BaselineFeature | undefined {
     throw wrapError(
       error,
       `Failed to get feature by ID: ${featureId}`,
-      'FEATURE_LOOKUP_ERROR',
+      "FEATURE_LOOKUP_ERROR",
       { featureId }
     );
   }

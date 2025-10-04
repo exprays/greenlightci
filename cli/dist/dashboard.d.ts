@@ -2,7 +2,7 @@
  * Dashboard Client
  * Send scan results to GreenLightCI Dashboard
  */
-import { ScanResult } from './types.js';
+import { ScanResult } from "./types.js";
 export interface DashboardConfig {
     url: string;
     apiKey: string;

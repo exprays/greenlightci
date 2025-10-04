@@ -1,4 +1,4 @@
-import { CLIOptions } from '../types.js';
+import { CLIOptions } from "../types.js";
 /**
  * Check command - scan files and report compatibility
  */

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import ora from 'ora';
-import { BaselineStatus } from './shared';
+import { BaselineStatus } from './shared/index.js';
 /**
  * Terminal output formatting with colors and spinners
  */

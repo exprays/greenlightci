@@ -14,14 +14,14 @@ export interface CLIOptions {
   dashboardApiKey?: string;
 }
 
-export interface WatchOptions extends Omit<CLIOptions, 'json' | 'verbose'> {
+export interface WatchOptions extends Omit<CLIOptions, "json" | "verbose"> {
   // Watch-specific options can be added here
 }
 
 export interface ReportOptions {
   targetYear: string;
   output: string;
-  format: 'html' | 'json';
+  format: "html" | "json";
   include: string;
   exclude: string;
 }
@@ -37,7 +37,7 @@ export interface FeatureIssue {
   featureId: string;
   featureName: string;
   status: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
   line?: number;
   message: string;
 }

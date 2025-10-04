@@ -1,6 +1,6 @@
 import chokidar from 'chokidar';
 import { join } from 'path';
-import { getFeatureById, calculateCompatibilityScore, BaselineStatus, } from '../shared';
+import { getFeatureById, calculateCompatibilityScore, BaselineStatus, } from '../shared/index.js';
 import { readFileSync } from 'fs';
 import { detectFeatures as detectFeaturesFromParser } from '../scanner.js';
 import { parsePatterns } from '../scanner.js';

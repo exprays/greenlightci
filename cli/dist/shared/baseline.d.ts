@@ -1,4 +1,4 @@
-import { BaselineFeature, BaselineStatus, BrowserSupport } from './types.js';
+import { BaselineFeature, BaselineStatus, BrowserSupport } from "./types.js";
 /**
  * Get baseline status from web-features data
  */

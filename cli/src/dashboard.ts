@@ -3,7 +3,7 @@
  * Send scan results to GreenLightCI Dashboard
  */
 
-import { ScanResult } from './types.js';
+import { ScanResult } from "./types.js";
 
 export interface DashboardConfig {
   url: string;
@@ -35,7 +35,7 @@ export async function sendToDashboard(
   result: ScanResult,
   config: DashboardConfig,
   projectName: string,
-  branch: string = 'main',
+  branch: string = "main",
   commit?: string
 ): Promise<boolean> {
   try {
@@ -47,10 +47,10 @@ export async function sendToDashboard(
 
     for (const file of result.files) {
       for (const issue of file.issues) {
-        if (issue.status === 'widely') widelyCount++;
-        else if (issue.status === 'newly') newlyCount++;
-        else if (issue.status === 'limited') limitedCount++;
-        else if (issue.status === 'not-baseline') notBaselineCount++;
+        if (issue.status === "widely") widelyCount++;
+        else if (issue.status === "newly") newlyCount++;
+        else if (issue.status === "limited") limitedCount++;
+        else if (issue.status === "not-baseline") notBaselineCount++;
       }
     }
 
@@ -75,10 +75,10 @@ export async function sendToDashboard(
 
     // Send to dashboard
     const response = await fetch(`${config.url}/api/scans`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': config.apiKey,
+        "Content-Type": "application/json",
+        "x-api-key": config.apiKey,
       },
       body: JSON.stringify(dashboardData),
     });
@@ -93,7 +93,7 @@ export async function sendToDashboard(
 
     const responseData = (await response.json()) as { id?: string };
     console.log(
-      `✓ Scan data sent to dashboard (Scan ID: ${responseData.id || 'N/A'})`
+      `✓ Scan data sent to dashboard (Scan ID: ${responseData.id || "N/A"})`
     );
     return true;
   } catch (error) {

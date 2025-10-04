@@ -1,5 +1,5 @@
 import { Ora } from 'ora';
-import { BaselineStatus } from './shared';
+import { BaselineStatus } from './shared/index.js';
 import { FileResult, ScanResult } from './types.js';
 /**
  * Terminal output formatting with colors and spinners

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import ora, { Ora } from 'ora';
-import { BaselineStatus } from './shared';
+import { BaselineStatus } from './shared/index.js';
 import { FileResult, ScanResult } from './types.js';
 
 /**

@@ -1,12 +1,12 @@
-import { getFeatureById, calculateCompatibilityScore, BaselineStatus, } from '../shared';
-import { scanFiles, parsePatterns } from '../scanner.js';
-import { createSpinner, printHeader, printFileResult, printScanSummary, printFinalResult, } from '../output.js';
-import { sendToDashboard, validateDashboardConfig, } from '../dashboard.js';
+import { getFeatureById, calculateCompatibilityScore, BaselineStatus, } from "../shared/index.js";
+import { scanFiles, parsePatterns } from "../scanner.js";
+import { createSpinner, printHeader, printFileResult, printScanSummary, printFinalResult, } from "../output.js";
+import { sendToDashboard, validateDashboardConfig } from "../dashboard.js";
 /**
  * Check command - scan files and report compatibility
  */
 export async function checkCommand(path, options) {
-    const spinner = createSpinner('Scanning files...');
+    const spinner = createSpinner("Scanning files...");
     spinner.start();
     try {
         // Parse patterns
@@ -20,7 +20,7 @@ export async function checkCommand(path, options) {
         });
         spinner.succeed(`Found ${scannedFiles.length} files with web features`);
         if (scannedFiles.length === 0) {
-            console.log('\nNo files with web features found.');
+            console.log("\nNo files with web features found.");
             return;
         }
         // Analyze each file
@@ -39,9 +39,9 @@ export async function checkCommand(path, options) {
                 if (!feature)
                     continue;
                 totalFeatures++;
-                let severity = 'info';
+                let severity = "info";
                 let blocking = false;
-                let message = '';
+                let message = "";
                 // Determine severity based on status
                 if (feature.status === BaselineStatus.WidelyAvailable) {
                     widelyCount++;
@@ -49,7 +49,7 @@ export async function checkCommand(path, options) {
                 }
                 else if (feature.status === BaselineStatus.NewlyAvailable) {
                     newlyCount++;
-                    severity = 'warning';
+                    severity = "warning";
                     blocking = options.blockNewly;
                     message = `Newly available - consider adding polyfills`;
                     if (blocking)
@@ -65,7 +65,7 @@ export async function checkCommand(path, options) {
                     else {
                         notBaselineCount++;
                     }
-                    severity = 'error';
+                    severity = "error";
                     blocking = options.blockLimited;
                     message = `Limited browser support - polyfills required`;
                     if (blocking)
@@ -86,7 +86,7 @@ export async function checkCommand(path, options) {
             fileResults.push({
                 filePath: file.relativePath,
                 features: file.features,
-                issues: issues.filter((i) => i.severity !== 'info' || options.verbose),
+                issues: issues.filter((i) => i.severity !== "info" || options.verbose),
                 score,
             });
         }
@@ -108,7 +108,7 @@ export async function checkCommand(path, options) {
             console.log(JSON.stringify(result, null, 2));
         }
         else {
-            printHeader('🚦 GreenLightCI - Baseline Compatibility Check');
+            printHeader("🚦 GreenLightCI - Baseline Compatibility Check");
             // Print file results
             for (const fileResult of fileResults) {
                 if (fileResult.issues.length > 0 || options.verbose) {
@@ -123,16 +123,16 @@ export async function checkCommand(path, options) {
         // Send to dashboard if configured
         const dashboardConfig = validateDashboardConfig(options.dashboardUrl, options.dashboardApiKey);
         if (dashboardConfig) {
-            console.log('\n📊 Sending scan data to dashboard...');
-            const projectName = path.split(/[/\\]/).pop() || 'unknown-project';
-            const sent = await sendToDashboard(result, dashboardConfig, projectName, 'cli-scan');
+            console.log("\n📊 Sending scan data to dashboard...");
+            const projectName = path.split(/[/\\]/).pop() || "unknown-project";
+            const sent = await sendToDashboard(result, dashboardConfig, projectName, "cli-scan");
             if (!sent) {
-                console.warn('⚠️  Failed to send data to dashboard. Continuing with local results.');
+                console.warn("⚠️  Failed to send data to dashboard. Continuing with local results.");
             }
         }
     }
     catch (error) {
-        spinner.fail('Scan failed');
+        spinner.fail("Scan failed");
         console.error(error);
         process.exit(1);
     }

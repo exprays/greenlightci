@@ -5,7 +5,7 @@
 /**
  * Send scan results to dashboard
  */
-export async function sendToDashboard(result, config, projectName, branch = 'main', commit) {
+export async function sendToDashboard(result, config, projectName, branch = "main", commit) {
     try {
         // Count feature statuses from file results
         let widelyCount = 0;
@@ -14,13 +14,13 @@ export async function sendToDashboard(result, config, projectName, branch = 'mai
         let notBaselineCount = 0;
         for (const file of result.files) {
             for (const issue of file.issues) {
-                if (issue.status === 'widely')
+                if (issue.status === "widely")
                     widelyCount++;
-                else if (issue.status === 'newly')
+                else if (issue.status === "newly")
                     newlyCount++;
-                else if (issue.status === 'limited')
+                else if (issue.status === "limited")
                     limitedCount++;
-                else if (issue.status === 'not-baseline')
+                else if (issue.status === "not-baseline")
                     notBaselineCount++;
             }
         }
@@ -44,10 +44,10 @@ export async function sendToDashboard(result, config, projectName, branch = 'mai
         };
         // Send to dashboard
         const response = await fetch(`${config.url}/api/scans`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': config.apiKey,
+                "Content-Type": "application/json",
+                "x-api-key": config.apiKey,
             },
             body: JSON.stringify(dashboardData),
         });
@@ -57,7 +57,7 @@ export async function sendToDashboard(result, config, projectName, branch = 'mai
             return false;
         }
         const responseData = (await response.json());
-        console.log(`✓ Scan data sent to dashboard (Scan ID: ${responseData.id || 'N/A'})`);
+        console.log(`✓ Scan data sent to dashboard (Scan ID: ${responseData.id || "N/A"})`);
         return true;
     }
     catch (error) {

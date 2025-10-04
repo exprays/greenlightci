@@ -2,20 +2,17 @@ import {
   getFeatureById,
   calculateCompatibilityScore,
   BaselineStatus,
-} from '../shared';
-import { scanFiles, parsePatterns } from '../scanner.js';
+} from "../shared/index.js";
+import { scanFiles, parsePatterns } from "../scanner.js";
 import {
   createSpinner,
   printHeader,
   printFileResult,
   printScanSummary,
   printFinalResult,
-} from '../output.js';
-import { CLIOptions, FileResult, FeatureIssue, ScanResult } from '../types.js';
-import {
-  sendToDashboard,
-  validateDashboardConfig,
-} from '../dashboard.js';
+} from "../output.js";
+import { CLIOptions, FileResult, FeatureIssue, ScanResult } from "../types.js";
+import { sendToDashboard, validateDashboardConfig } from "../dashboard.js";
 
 /**
  * Check command - scan files and report compatibility
@@ -24,7 +21,11 @@ export async function checkCommand(
   path: string,
   options: CLIOptions
 ): Promise<void> {
-  const spinner = createSpinner('Scanning files...');
+  // Debug: log options
+  console.log('Dashboard URL:', options.dashboardUrl);
+  console.log('Dashboard API Key:', options.dashboardApiKey ? '***' + options.dashboardApiKey.slice(-4) : 'not set');
+  
+  const spinner = createSpinner("Scanning files...");
   spinner.start();
 
   try {
@@ -42,7 +43,7 @@ export async function checkCommand(
     spinner.succeed(`Found ${scannedFiles.length} files with web features`);
 
     if (scannedFiles.length === 0) {
-      console.log('\nNo files with web features found.');
+      console.log("\nNo files with web features found.");
       return;
     }
 
@@ -65,9 +66,9 @@ export async function checkCommand(
 
         totalFeatures++;
 
-        let severity: 'error' | 'warning' | 'info' = 'info';
+        let severity: "error" | "warning" | "info" = "info";
         let blocking = false;
-        let message = '';
+        let message = "";
 
         // Determine severity based on status
         if (feature.status === BaselineStatus.WidelyAvailable) {
@@ -75,7 +76,7 @@ export async function checkCommand(
           message = `Widely available across all major browsers`;
         } else if (feature.status === BaselineStatus.NewlyAvailable) {
           newlyCount++;
-          severity = 'warning';
+          severity = "warning";
           blocking = options.blockNewly;
           message = `Newly available - consider adding polyfills`;
           if (blocking) totalBlocking++;
@@ -89,7 +90,7 @@ export async function checkCommand(
           } else {
             notBaselineCount++;
           }
-          severity = 'error';
+          severity = "error";
           blocking = options.blockLimited;
           message = `Limited browser support - polyfills required`;
           if (blocking) totalBlocking++;
@@ -116,7 +117,7 @@ export async function checkCommand(
       fileResults.push({
         filePath: file.relativePath,
         features: file.features,
-        issues: issues.filter((i) => i.severity !== 'info' || options.verbose),
+        issues: issues.filter((i) => i.severity !== "info" || options.verbose),
         score,
       });
     }
@@ -142,7 +143,7 @@ export async function checkCommand(
     if (options.json) {
       console.log(JSON.stringify(result, null, 2));
     } else {
-      printHeader('🚦 GreenLightCI - Baseline Compatibility Check');
+      printHeader("🚦 GreenLightCI - Baseline Compatibility Check");
 
       // Print file results
       for (const fileResult of fileResults) {
@@ -165,23 +166,23 @@ export async function checkCommand(
     );
 
     if (dashboardConfig) {
-      console.log('\n📊 Sending scan data to dashboard...');
-      const projectName = path.split(/[/\\]/).pop() || 'unknown-project';
+      console.log("\n📊 Sending scan data to dashboard...");
+      const projectName = path.split(/[/\\]/).pop() || "unknown-project";
       const sent = await sendToDashboard(
         result,
         dashboardConfig,
         projectName,
-        'cli-scan'
+        "cli-scan"
       );
 
       if (!sent) {
         console.warn(
-          '⚠️  Failed to send data to dashboard. Continuing with local results.'
+          "⚠️  Failed to send data to dashboard. Continuing with local results."
         );
       }
     }
   } catch (error) {
-    spinner.fail('Scan failed');
+    spinner.fail("Scan failed");
     console.error(error);
     process.exit(1);
   }
