@@ -13,7 +13,7 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "web-features": "^0.8.0"
+        "web-features": "^0.8.6"
     },
     "publishConfig": {
         "access": "public"
