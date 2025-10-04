@@ -31,6 +31,16 @@ inputs:
     required: false
     default: ''
 
+  dashboard-url:
+    description: 'URL of GreenLightCI dashboard for reporting (e.g., https://dashboard.greenlightci.com)'
+    required: false
+    default: ''
+
+  dashboard-api-key:
+    description: 'API key for authenticating with dashboard'
+    required: false
+    default: ''
+
 outputs:
   compatibility-score:
     description: 'Overall compatibility score (0-100)'

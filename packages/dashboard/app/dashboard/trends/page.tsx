@@ -5,7 +5,14 @@ import { FeatureUsageChart } from '@/components/charts/FeatureUsageChart';
 import { IssuesTrendChart } from '@/components/charts/IssuesTrendChart';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { TrendingUp, Activity, BarChart3, LineChart, Calendar, Download } from 'lucide-react';
+import {
+  TrendingUp,
+  Activity,
+  BarChart3,
+  LineChart,
+  Calendar,
+  Download,
+} from 'lucide-react';
 
 async function getTrends() {
   try {
@@ -75,8 +82,11 @@ export default async function TrendsPage() {
                     </div>
                   </div>
                   {trends.summary?.scansChange && (
-                    <p className={`text-sm mt-2 ${trends.summary.scansChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {trends.summary.scansChange >= 0 ? '+' : ''}{trends.summary.scansChange}% from last period
+                    <p
+                      className={`text-sm mt-2 ${trends.summary.scansChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                    >
+                      {trends.summary.scansChange >= 0 ? '+' : ''}
+                      {trends.summary.scansChange}% from last period
                     </p>
                   )}
                 </CardContent>
@@ -98,8 +108,11 @@ export default async function TrendsPage() {
                     </div>
                   </div>
                   {trends.summary?.scoreChange && (
-                    <p className={`text-sm mt-2 ${trends.summary.scoreChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {trends.summary.scoreChange >= 0 ? '+' : ''}{trends.summary.scoreChange.toFixed(1)}% from last period
+                    <p
+                      className={`text-sm mt-2 ${trends.summary.scoreChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                    >
+                      {trends.summary.scoreChange >= 0 ? '+' : ''}
+                      {trends.summary.scoreChange.toFixed(1)}% from last period
                     </p>
                   )}
                 </CardContent>
@@ -139,8 +152,11 @@ export default async function TrendsPage() {
                     </div>
                   </div>
                   {trends.summary?.issuesChange && (
-                    <p className={`text-sm mt-2 ${trends.summary.issuesChange <= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {trends.summary.issuesChange >= 0 ? '+' : ''}{trends.summary.issuesChange}% from last period
+                    <p
+                      className={`text-sm mt-2 ${trends.summary.issuesChange <= 0 ? 'text-green-600' : 'text-red-600'}`}
+                    >
+                      {trends.summary.issuesChange >= 0 ? '+' : ''}
+                      {trends.summary.issuesChange}% from last period
                     </p>
                   )}
                 </CardContent>
@@ -171,8 +187,12 @@ export default async function TrendsPage() {
                   <CardTitle>Feature Usage Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {trends.featureTimeline && trends.featureTimeline.length > 0 ? (
-                    <FeatureUsageChart data={trends.featureTimeline} height={250} />
+                  {trends.featureTimeline &&
+                  trends.featureTimeline.length > 0 ? (
+                    <FeatureUsageChart
+                      data={trends.featureTimeline}
+                      height={250}
+                    />
                   ) : (
                     <div className="flex items-center justify-center h-[250px] text-gray-500">
                       No data available
@@ -188,7 +208,10 @@ export default async function TrendsPage() {
                 </CardHeader>
                 <CardContent>
                   {trends.issuesTimeline && trends.issuesTimeline.length > 0 ? (
-                    <IssuesTrendChart data={trends.issuesTimeline} height={250} />
+                    <IssuesTrendChart
+                      data={trends.issuesTimeline}
+                      height={250}
+                    />
                   ) : (
                     <div className="flex items-center justify-center h-[250px] text-gray-500">
                       No data available
@@ -205,23 +228,29 @@ export default async function TrendsPage() {
                 <CardContent>
                   {trends.topFeatures && trends.topFeatures.length > 0 ? (
                     <div className="space-y-3">
-                      {trends.topFeatures.slice(0, 8).map((feature: any, index: number) => (
-                        <div key={feature.featureId} className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded flex items-center justify-center">
-                              <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
-                                {index + 1}
+                      {trends.topFeatures
+                        .slice(0, 8)
+                        .map((feature: any, index: number) => (
+                          <div
+                            key={feature.featureId}
+                            className="flex items-center justify-between"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded flex items-center justify-center">
+                                <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
+                                  {index + 1}
+                                </span>
+                              </div>
+                              <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                {feature.featureId}
                               </span>
                             </div>
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
-                              {feature.featureId}
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {feature.count}{' '}
+                              {feature.count === 1 ? 'use' : 'uses'}
                             </span>
                           </div>
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {feature.count} {feature.count === 1 ? 'use' : 'uses'}
-                          </span>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   ) : (
                     <div className="flex items-center justify-center h-[250px] text-gray-500">
@@ -231,8 +260,6 @@ export default async function TrendsPage() {
                 </CardContent>
               </Card>
             </div>
-
-
           </>
         ) : (
           <Card>

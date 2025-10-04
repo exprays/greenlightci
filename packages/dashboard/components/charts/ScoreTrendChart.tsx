@@ -22,7 +22,11 @@ interface ScoreTrendChartProps {
   height?: number;
 }
 
-export function ScoreTrendChart({ data, title, height = 300 }: ScoreTrendChartProps) {
+export function ScoreTrendChart({
+  data,
+  title,
+  height = 300,
+}: ScoreTrendChartProps) {
   return (
     <div className="w-full">
       {title && (
@@ -31,8 +35,14 @@ export function ScoreTrendChart({ data, title, height = 300 }: ScoreTrendChartPr
         </h3>
       )}
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
+        <LineChart
+          data={data}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            className="stroke-gray-200 dark:stroke-gray-700"
+          />
           <XAxis
             dataKey="date"
             tickFormatter={(value) => format(new Date(value), 'MMM d')}

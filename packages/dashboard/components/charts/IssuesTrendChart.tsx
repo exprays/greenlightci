@@ -27,7 +27,11 @@ const COLORS = {
   warnings: '#f59e0b',
 };
 
-export function IssuesTrendChart({ data, title, height = 300 }: IssuesTrendChartProps) {
+export function IssuesTrendChart({
+  data,
+  title,
+  height = 300,
+}: IssuesTrendChartProps) {
   return (
     <div className="w-full">
       {title && (
@@ -36,8 +40,14 @@ export function IssuesTrendChart({ data, title, height = 300 }: IssuesTrendChart
         </h3>
       )}
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            className="stroke-gray-200 dark:stroke-gray-700"
+          />
           <XAxis
             dataKey="date"
             className="text-sm text-gray-600 dark:text-gray-400"
@@ -52,8 +62,18 @@ export function IssuesTrendChart({ data, title, height = 300 }: IssuesTrendChart
             }}
           />
           <Legend />
-          <Bar dataKey="blocking" fill={COLORS.blocking} name="Blocking Issues" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="warnings" fill={COLORS.warnings} name="Warnings" radius={[4, 4, 0, 0]} />
+          <Bar
+            dataKey="blocking"
+            fill={COLORS.blocking}
+            name="Blocking Issues"
+            radius={[4, 4, 0, 0]}
+          />
+          <Bar
+            dataKey="warnings"
+            fill={COLORS.warnings}
+            name="Warnings"
+            radius={[4, 4, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

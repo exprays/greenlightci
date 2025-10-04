@@ -23,7 +23,11 @@ interface FeatureUsageChartProps {
   height?: number;
 }
 
-export function FeatureUsageChart({ data, title, height = 300 }: FeatureUsageChartProps) {
+export function FeatureUsageChart({
+  data,
+  title,
+  height = 300,
+}: FeatureUsageChartProps) {
   return (
     <div className="w-full">
       {title && (
@@ -32,7 +36,10 @@ export function FeatureUsageChart({ data, title, height = 300 }: FeatureUsageCha
         </h3>
       )}
       <ResponsiveContainer width="100%" height={height}>
-        <AreaChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <AreaChart
+          data={data}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
           <defs>
             <linearGradient id="widelyAvailable" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
@@ -47,7 +54,10 @@ export function FeatureUsageChart({ data, title, height = 300 }: FeatureUsageCha
               <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            className="stroke-gray-200 dark:stroke-gray-700"
+          />
           <XAxis
             dataKey="date"
             tickFormatter={(value) => format(new Date(value), 'MMM d')}

@@ -1,0 +1,33 @@
+name: Baseline Compatibility Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  baseline-check:
+    runs-on: ubuntu-latest
+    name: Check Web Feature Compatibility
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Baseline Compatibility Check
+        uses: ./packages/action
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          baseline-year: '2023'
+          block-newly-available: false
+          block-limited-availability: true
+          # Optional: Send results to GreenLightCI Dashboard
+          dashboard-url: ${{ secrets.DASHBOARD_URL }}
+          dashboard-api-key: ${{ secrets.DASHBOARD_API_KEY }}
+
+      - name: Comment on PR
+        if: always()
+        run: |
+          echo "Baseline compatibility check completed!"
+          echo "Check the PR comments for detailed results."

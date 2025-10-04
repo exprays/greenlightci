@@ -23,6 +23,114 @@ import { getOctokit, getPRDiff, postComment, setStatus } from './github.js';
 import { parsePRDiff, getAddedLines, detectFeatures } from './parser.js';
 
 /**
+ * Send scan results to GreenLightCI dashboard
+ */
+async function sendToDashboard(
+  report: CompatibilityReport,
+  context: typeof github.context,
+  config: BaselineConfig
+): Promise<void> {
+  const dashboardUrl = core.getInput('dashboard-url');
+  const apiKey = core.getInput('dashboard-api-key');
+
+  if (!dashboardUrl) {
+    core.info('ℹ️  Dashboard URL not configured, skipping reporting');
+    return;
+  }
+
+  if (!apiKey) {
+    core.warning('⚠️  Dashboard API key not provided, skipping reporting');
+    return;
+  }
+
+  try {
+    core.info('📊 Sending results to dashboard...');
+
+    const { owner, repo } = context.repo;
+    const prNumber = context.payload.pull_request?.number;
+    const branch = context.payload.pull_request?.head.ref;
+    const commitSha = context.payload.pull_request?.head.sha;
+
+    // Group results by file
+    const fileMap = new Map<string, CompatibilityResult[]>();
+    for (const result of report.results) {
+      if (!fileMap.has(result.filePath)) {
+        fileMap.set(result.filePath, []);
+      }
+      fileMap.get(result.filePath)!.push(result);
+    }
+
+    // Prepare submission payload
+    const payload = {
+      project: {
+        name: `${owner}/${repo}`,
+        owner,
+        repo,
+        url: `https://github.com/${owner}/${repo}`,
+      },
+      scan: {
+        prNumber,
+        branch,
+        commitSha,
+        totalFiles: fileMap.size,
+        totalFeatures: report.totalFeatures,
+        blockingIssues: report.blockingCount,
+        warnings: report.warningCount,
+        averageScore: report.score,
+        targetYear: config.targetYear,
+        blockNewly: config.blockNewlyAvailable,
+        blockLimited: config.blockLimitedAvailability,
+      },
+      files: Array.from(fileMap.entries()).map(([filePath, results]) => ({
+        filePath,
+        score: calculateCompatibilityScore(
+          results.filter(r => r.feature.status === BaselineStatus.WidelyAvailable).length,
+          results.filter(r => r.feature.status === BaselineStatus.NewlyAvailable).length,
+          results.filter(r => r.feature.status === BaselineStatus.Limited).length,
+          results.filter(r => r.feature.status === BaselineStatus.NotBaseline).length
+        ),
+        issuesCount: results.filter(r => r.blocking).length,
+        features: results.map(r => ({
+          featureId: r.feature.id,
+          featureName: r.feature.name,
+          status: r.feature.status,
+          severity: r.severity,
+        })),
+      })),
+      features: report.results.map(r => ({
+        featureId: r.feature.id,
+        featureName: r.feature.name,
+        status: r.feature.status,
+        severity: r.severity,
+        message: `Used in ${r.filePath}${r.line ? ` at line ${r.line}` : ''}`,
+        polyfill: null,
+      })),
+    };
+
+    const response = await fetch(`${dashboardUrl}/api/scans`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Dashboard API error: ${response.status} - ${error}`);
+    }
+
+    const result = await response.json();
+    core.info(`✅ Results sent to dashboard successfully`);
+    core.info(`   Scan ID: ${result.scan?.id || 'unknown'}`);
+  } catch (error) {
+    core.warning(`Failed to send results to dashboard: ${error instanceof Error ? error.message : String(error)}`);
+    // Don't fail the action if dashboard reporting fails
+  }
+}
+
+/**
  * Main action entry point with comprehensive error handling
  */
 export async function run(): Promise<void> {
@@ -206,6 +314,9 @@ export async function run(): Promise<void> {
     core.info(`Analysis complete: ${report.totalFeatures} features detected`);
     core.info(`Compatibility score: ${score}/100`);
     core.info(`Blocking issues: ${report.blockingCount}`);
+
+    // Send results to dashboard if configured
+    await sendToDashboard(report, context, config);
 
     // Set outputs
     core.setOutput(ACTION_OUTPUTS.COMPATIBILITY_SCORE, score);
