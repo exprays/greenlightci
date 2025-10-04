@@ -36,6 +36,7 @@ coverage/
 # Database
 *.db
 *.sqlite
+migrations
 
 # Logs
 logs/

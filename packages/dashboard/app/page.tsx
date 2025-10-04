@@ -36,7 +36,7 @@ export default function HomePage() {
                 <Github className="w-5 h-5" />
               </Link>
               <Link
-                href="/api/auth/signin"
+                href="/api/auth/signin/github?callbackUrl=/dashboard"
                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
               >
                 <Github className="w-4 h-4 mr-2" />
