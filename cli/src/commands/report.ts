@@ -3,7 +3,7 @@ import {
   getFeatureById,
   calculateCompatibilityScore,
   BaselineStatus,
-} from '@greenlightci/shared';
+} from '../shared';
 import { scanFiles, parsePatterns } from '../scanner.js';
 import { createSpinner, printSuccess } from '../output.js';
 import { ReportOptions, FileResult, FeatureIssue } from '../types.js';

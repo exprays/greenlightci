@@ -4,7 +4,7 @@ import {
   getFeatureById,
   calculateCompatibilityScore,
   BaselineStatus,
-} from '@greenlightci/shared';
+} from '../shared';
 import { readFileSync } from 'fs';
 import { detectFeatures as detectFeaturesFromParser } from '../scanner.js';
 import { parsePatterns } from '../scanner.js';
