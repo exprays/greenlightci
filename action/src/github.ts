@@ -11,7 +11,7 @@ import {
   githubCache,
   getPRDiffCacheKey,
   GitHubAPIError,
-} from '@greenlightci/shared';
+} from './shared';
 
 /**
  * Get the Octokit instance for GitHub API

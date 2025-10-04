@@ -18,7 +18,7 @@ import {
   formatErrorForLog,
   getCacheStats,
   pruneAllCaches,
-} from '@greenlightci/shared';
+} from './shared';
 import { getOctokit, getPRDiff, postComment, setStatus } from './github.js';
 import { parsePRDiff, getAddedLines, detectFeatures } from './parser.js';
 

@@ -1,5 +1,5 @@
 import parseDiff, { File } from 'parse-diff';
-import { ParseError } from '@greenlightci/shared';
+import { ParseError } from './shared';
 
 /**
  * Parse diff content and extract file changes (with error handling)
