@@ -22,9 +22,14 @@ export async function checkCommand(
   options: CLIOptions
 ): Promise<void> {
   // Debug: log options
-  console.log('Dashboard URL:', options.dashboardUrl);
-  console.log('Dashboard API Key:', options.dashboardApiKey ? '***' + options.dashboardApiKey.slice(-4) : 'not set');
-  
+  console.log("Dashboard URL:", options.dashboardUrl);
+  console.log(
+    "Dashboard API Key:",
+    options.dashboardApiKey
+      ? "***" + options.dashboardApiKey.slice(-4)
+      : "not set"
+  );
+
   const spinner = createSpinner("Scanning files...");
   spinner.start();
 
@@ -167,12 +172,17 @@ export async function checkCommand(
 
     if (dashboardConfig) {
       console.log("\n📊 Sending scan data to dashboard...");
-      const projectName = path.split(/[/\\]/).pop() || "unknown-project";
       const sent = await sendToDashboard(
         result,
         dashboardConfig,
-        projectName,
-        "cli-scan"
+        path,
+        {
+          targetYear: options.targetYear,
+          blockNewly: options.blockNewly,
+          blockLimited: options.blockLimited,
+          branch: "main", // TODO: Extract from git
+          commit: undefined, // TODO: Extract from git
+        }
       );
 
       if (!sent) {
@@ -180,6 +190,11 @@ export async function checkCommand(
           "⚠️  Failed to send data to dashboard. Continuing with local results."
         );
       }
+    }
+
+    // Exit with appropriate code based on results
+    if (result.summary.blockingIssues > 0) {
+      process.exit(1);
     }
   } catch (error) {
     spinner.fail("Scan failed");

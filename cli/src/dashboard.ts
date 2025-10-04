@@ -3,7 +3,8 @@
  * Send scan results to GreenLightCI Dashboard
  */
 
-import { ScanResult } from "./types.js";
+import { ScanResult, FeatureIssue } from "./types.js";
+import * as path from 'path';
 
 export interface DashboardConfig {
   url: string;
@@ -11,20 +12,38 @@ export interface DashboardConfig {
 }
 
 export interface DashboardScanData {
-  projectName: string;
-  branch: string;
-  commit?: string;
-  totalFiles: number;
-  totalFeatures: number;
-  widelyAvailable: number;
-  newlyAvailable: number;
-  limited: number;
-  notBaseline: number;
-  compatibilityScore: number;
-  filesScanned: Array<{
-    path: string;
-    features: string[];
+  project: {
+    owner: string;
+    repo: string;
+    name: string;
+    url: string;
+  };
+  scan: {
+    prNumber?: number;
+    branch?: string;
+    commitSha?: string;
+    totalFiles: number;
+    totalFeatures: number;
+    blockingIssues: number;
+    warnings: number;
+    averageScore: number;
+    targetYear: string;
+    blockNewly: boolean;
+    blockLimited: boolean;
+  };
+  files: Array<{
+    filePath: string;
     score: number;
+    issuesCount: number;
+    features: string[];
+  }>;
+  features: Array<{
+    featureId: string;
+    featureName: string;
+    status: 'widely' | 'newly' | 'limited';
+    severity: 'info' | 'warning' | 'error';
+    message?: string;
+    polyfill?: string;
   }>;
 }
 
@@ -34,46 +53,66 @@ export interface DashboardScanData {
 export async function sendToDashboard(
   result: ScanResult,
   config: DashboardConfig,
-  projectName: string,
-  branch: string = "main",
-  commit?: string
+  scanPath: string,
+  options: { targetYear: string; blockNewly: boolean; blockLimited: boolean; branch?: string; commit?: string }
 ): Promise<boolean> {
   try {
-    // Count feature statuses from file results
-    let widelyCount = 0;
-    let newlyCount = 0;
-    let limitedCount = 0;
-    let notBaselineCount = 0;
-
+    // Extract project info from path (simplistic for now)
+    const projectName = path.basename(path.resolve(scanPath));
+    const owner = "local"; // Default for CLI scans
+    const repo = projectName;
+    
+    // Collect all unique features from all files
+    const featureMap = new Map<string, FeatureIssue>();
+    
     for (const file of result.files) {
       for (const issue of file.issues) {
-        if (issue.status === "widely") widelyCount++;
-        else if (issue.status === "newly") newlyCount++;
-        else if (issue.status === "limited") limitedCount++;
-        else if (issue.status === "not-baseline") notBaselineCount++;
+        // Use featureId as key to avoid duplicates
+        if (!featureMap.has(issue.featureId)) {
+          featureMap.set(issue.featureId, issue);
+        }
       }
     }
 
-    // Prepare dashboard data
+    // Prepare dashboard data matching ScanSubmission interface
     const dashboardData: DashboardScanData = {
-      projectName,
-      branch,
-      commit,
-      totalFiles: result.summary.totalFiles,
-      totalFeatures: result.summary.totalFeatures,
-      widelyAvailable: widelyCount,
-      newlyAvailable: newlyCount,
-      limited: limitedCount,
-      notBaseline: notBaselineCount,
-      compatibilityScore: result.summary.averageScore,
-      filesScanned: result.files.map((f) => ({
-        path: f.filePath,
-        features: f.features,
+      project: {
+        owner,
+        repo,
+        name: projectName,
+        url: `file://${path.resolve(scanPath)}`, // Local file path for CLI scans
+      },
+      scan: {
+        branch: options.branch || "main",
+        commitSha: options.commit,
+        totalFiles: result.summary.totalFiles,
+        totalFeatures: result.summary.totalFeatures,
+        blockingIssues: result.summary.blockingIssues,
+        warnings: result.summary.warnings,
+        averageScore: result.summary.averageScore,
+        targetYear: options.targetYear,
+        blockNewly: options.blockNewly,
+        blockLimited: options.blockLimited,
+      },
+      files: result.files.map((f) => ({
+        filePath: f.filePath,
         score: f.score,
+        issuesCount: f.issues.length,
+        features: f.features,
+      })),
+      features: Array.from(featureMap.values()).map((issue) => ({
+        featureId: issue.featureId,
+        featureName: issue.featureName,
+        status: issue.status as 'widely' | 'newly' | 'limited',
+        severity: issue.severity,
+        message: issue.message,
+        polyfill: undefined, // We don't track polyfills in CLI yet
       })),
     };
 
     // Send to dashboard
+    console.log("DEBUG: Sending data:", JSON.stringify(dashboardData, null, 2));
+    
     const response = await fetch(`${config.url}/api/scans`, {
       method: "POST",
       headers: {
@@ -91,9 +130,9 @@ export async function sendToDashboard(
       return false;
     }
 
-    const responseData = (await response.json()) as { id?: string };
+    const responseData = (await response.json()) as { scanId?: string; projectId?: string };
     console.log(
-      `✓ Scan data sent to dashboard (Scan ID: ${responseData.id || "N/A"})`
+      `✓ Scan data sent to dashboard (Scan ID: ${responseData.scanId || "N/A"})`
     );
     return true;
   } catch (error) {

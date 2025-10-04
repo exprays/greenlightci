@@ -8,26 +8,50 @@ export interface DashboardConfig {
     apiKey: string;
 }
 export interface DashboardScanData {
-    projectName: string;
-    branch: string;
-    commit?: string;
-    totalFiles: number;
-    totalFeatures: number;
-    widelyAvailable: number;
-    newlyAvailable: number;
-    limited: number;
-    notBaseline: number;
-    compatibilityScore: number;
-    filesScanned: Array<{
-        path: string;
-        features: string[];
+    project: {
+        owner: string;
+        repo: string;
+        name: string;
+        url: string;
+    };
+    scan: {
+        prNumber?: number;
+        branch?: string;
+        commitSha?: string;
+        totalFiles: number;
+        totalFeatures: number;
+        blockingIssues: number;
+        warnings: number;
+        averageScore: number;
+        targetYear: string;
+        blockNewly: boolean;
+        blockLimited: boolean;
+    };
+    files: Array<{
+        filePath: string;
         score: number;
+        issuesCount: number;
+        features: string[];
+    }>;
+    features: Array<{
+        featureId: string;
+        featureName: string;
+        status: 'widely' | 'newly' | 'limited';
+        severity: 'info' | 'warning' | 'error';
+        message?: string;
+        polyfill?: string;
     }>;
 }
 /**
  * Send scan results to dashboard
  */
-export declare function sendToDashboard(result: ScanResult, config: DashboardConfig, projectName: string, branch?: string, commit?: string): Promise<boolean>;
+export declare function sendToDashboard(result: ScanResult, config: DashboardConfig, scanPath: string, options: {
+    targetYear: string;
+    blockNewly: boolean;
+    blockLimited: boolean;
+    branch?: string;
+    commit?: string;
+}): Promise<boolean>;
 /**
  * Validate dashboard configuration
  */

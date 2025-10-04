@@ -1,12 +1,12 @@
-import { writeFileSync } from 'fs';
-import { getFeatureById, calculateCompatibilityScore, BaselineStatus, } from '../shared/index.js';
-import { scanFiles, parsePatterns } from '../scanner.js';
-import { createSpinner, printSuccess } from '../output.js';
+import { writeFileSync } from "fs";
+import { getFeatureById, calculateCompatibilityScore, BaselineStatus, } from "../shared/index.js";
+import { scanFiles, parsePatterns } from "../scanner.js";
+import { createSpinner, printSuccess } from "../output.js";
 /**
  * Report command - generate detailed compatibility report
  */
 export async function reportCommand(path, options) {
-    const spinner = createSpinner('Generating report...');
+    const spinner = createSpinner("Generating report...");
     spinner.start();
     try {
         // Parse patterns
@@ -35,16 +35,16 @@ export async function reportCommand(path, options) {
                 if (!feature)
                     continue;
                 totalFeatures++;
-                let severity = 'info';
-                let message = '';
+                let severity = "info";
+                let message = "";
                 if (feature.status === BaselineStatus.WidelyAvailable) {
                     widelyCount++;
                     message = `Widely available across all major browsers`;
                 }
                 else if (feature.status === BaselineStatus.NewlyAvailable) {
                     newlyCount++;
-                    severity = 'warning';
-                    message = `Newly available (${feature.baselineYear || 'recent'}) - consider polyfills`;
+                    severity = "warning";
+                    message = `Newly available (${feature.baselineYear || "recent"}) - consider polyfills`;
                     totalWarnings++;
                 }
                 else {
@@ -54,7 +54,7 @@ export async function reportCommand(path, options) {
                     else {
                         notBaselineCount++;
                     }
-                    severity = 'error';
+                    severity = "error";
                     message = `Limited browser support - polyfills required`;
                     totalBlocking++;
                 }
@@ -84,8 +84,8 @@ export async function reportCommand(path, options) {
             averageScore,
         };
         // Generate report
-        spinner.text = 'Generating report file...';
-        if (options.format === 'json') {
+        spinner.text = "Generating report file...";
+        if (options.format === "json") {
             const jsonReport = {
                 timestamp: new Date().toISOString(),
                 path,
@@ -102,7 +102,7 @@ export async function reportCommand(path, options) {
         printSuccess(`Scanned ${summary.totalFiles} files with ${summary.totalFeatures} features`);
     }
     catch (error) {
-        spinner.fail('Report generation failed');
+        spinner.fail("Report generation failed");
         console.error(error);
         process.exit(1);
     }
@@ -112,10 +112,10 @@ export async function reportCommand(path, options) {
  */
 function generateHTMLReport(path, summary, fileResults) {
     const scoreColor = summary.averageScore >= 80
-        ? '#22c55e'
+        ? "#22c55e"
         : summary.averageScore >= 60
-            ? '#eab308'
-            : '#ef4444';
+            ? "#eab308"
+            : "#ef4444";
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,11 +168,11 @@ function generateHTMLReport(path, summary, fileResults) {
         <div class="metric-label">Features Detected</div>
       </div>
       <div class="metric">
-        <div class="metric-value" style="color: ${summary.blockingIssues > 0 ? '#ef4444' : '#22c55e'}">${summary.blockingIssues}</div>
+        <div class="metric-value" style="color: ${summary.blockingIssues > 0 ? "#ef4444" : "#22c55e"}">${summary.blockingIssues}</div>
         <div class="metric-label">Blocking Issues</div>
       </div>
       <div class="metric">
-        <div class="metric-value" style="color: ${summary.warnings > 0 ? '#eab308' : '#22c55e'}">${summary.warnings}</div>
+        <div class="metric-value" style="color: ${summary.warnings > 0 ? "#eab308" : "#22c55e"}">${summary.warnings}</div>
         <div class="metric-label">Warnings</div>
       </div>
     </div>
@@ -194,11 +194,11 @@ function generateHTMLReport(path, summary, fileResults) {
               <div class="issue-message">${issue.message}</div>
             </div>
           `)
-            .join('')
+            .join("")
         : '<div style="color: #22c55e; font-weight: 600;">✓ All features are compatible</div>'}
         </div>
       `)
-        .join('')}
+        .join("")}
     </div>
 
     <div class="footer">

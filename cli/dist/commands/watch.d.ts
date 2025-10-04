@@ -1,4 +1,4 @@
-import { WatchOptions } from '../types.js';
+import { WatchOptions } from "../types.js";
 /**
  * Watch command - continuously monitor files for changes
  */

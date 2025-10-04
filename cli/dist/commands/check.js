@@ -6,6 +6,11 @@ import { sendToDashboard, validateDashboardConfig } from "../dashboard.js";
  * Check command - scan files and report compatibility
  */
 export async function checkCommand(path, options) {
+    // Debug: log options
+    console.log("Dashboard URL:", options.dashboardUrl);
+    console.log("Dashboard API Key:", options.dashboardApiKey
+        ? "***" + options.dashboardApiKey.slice(-4)
+        : "not set");
     const spinner = createSpinner("Scanning files...");
     spinner.start();
     try {
@@ -124,11 +129,20 @@ export async function checkCommand(path, options) {
         const dashboardConfig = validateDashboardConfig(options.dashboardUrl, options.dashboardApiKey);
         if (dashboardConfig) {
             console.log("\n📊 Sending scan data to dashboard...");
-            const projectName = path.split(/[/\\]/).pop() || "unknown-project";
-            const sent = await sendToDashboard(result, dashboardConfig, projectName, "cli-scan");
+            const sent = await sendToDashboard(result, dashboardConfig, path, {
+                targetYear: options.targetYear,
+                blockNewly: options.blockNewly,
+                blockLimited: options.blockLimited,
+                branch: "main", // TODO: Extract from git
+                commit: undefined, // TODO: Extract from git
+            });
             if (!sent) {
                 console.warn("⚠️  Failed to send data to dashboard. Continuing with local results.");
             }
+        }
+        // Exit with appropriate code based on results
+        if (result.summary.blockingIssues > 0) {
+            process.exit(1);
         }
     }
     catch (error) {

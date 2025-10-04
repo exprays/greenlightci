@@ -1,12 +1,12 @@
-import { writeFileSync } from 'fs';
+import { writeFileSync } from "fs";
 import {
   getFeatureById,
   calculateCompatibilityScore,
   BaselineStatus,
-} from '../shared/index.js';
-import { scanFiles, parsePatterns } from '../scanner.js';
-import { createSpinner, printSuccess } from '../output.js';
-import { ReportOptions, FileResult, FeatureIssue } from '../types.js';
+} from "../shared/index.js";
+import { scanFiles, parsePatterns } from "../scanner.js";
+import { createSpinner, printSuccess } from "../output.js";
+import { ReportOptions, FileResult, FeatureIssue } from "../types.js";
 
 /**
  * Report command - generate detailed compatibility report
@@ -15,7 +15,7 @@ export async function reportCommand(
   path: string,
   options: ReportOptions
 ): Promise<void> {
-  const spinner = createSpinner('Generating report...');
+  const spinner = createSpinner("Generating report...");
   spinner.start();
 
   try {
@@ -51,16 +51,18 @@ export async function reportCommand(
 
         totalFeatures++;
 
-        let severity: 'error' | 'warning' | 'info' = 'info';
-        let message = '';
+        let severity: "error" | "warning" | "info" = "info";
+        let message = "";
 
         if (feature.status === BaselineStatus.WidelyAvailable) {
           widelyCount++;
           message = `Widely available across all major browsers`;
         } else if (feature.status === BaselineStatus.NewlyAvailable) {
           newlyCount++;
-          severity = 'warning';
-          message = `Newly available (${feature.baselineYear || 'recent'}) - consider polyfills`;
+          severity = "warning";
+          message = `Newly available (${
+            feature.baselineYear || "recent"
+          }) - consider polyfills`;
           totalWarnings++;
         } else {
           if (feature.status === BaselineStatus.Limited) {
@@ -68,7 +70,7 @@ export async function reportCommand(
           } else {
             notBaselineCount++;
           }
-          severity = 'error';
+          severity = "error";
           message = `Limited browser support - polyfills required`;
           totalBlocking++;
         }
@@ -111,9 +113,9 @@ export async function reportCommand(
     };
 
     // Generate report
-    spinner.text = 'Generating report file...';
+    spinner.text = "Generating report file...";
 
-    if (options.format === 'json') {
+    if (options.format === "json") {
       const jsonReport = {
         timestamp: new Date().toISOString(),
         path,
@@ -131,7 +133,7 @@ export async function reportCommand(
       `Scanned ${summary.totalFiles} files with ${summary.totalFeatures} features`
     );
   } catch (error) {
-    spinner.fail('Report generation failed');
+    spinner.fail("Report generation failed");
     console.error(error);
     process.exit(1);
   }
@@ -147,10 +149,10 @@ function generateHTMLReport(
 ): string {
   const scoreColor =
     summary.averageScore >= 80
-      ? '#22c55e'
+      ? "#22c55e"
       : summary.averageScore >= 60
-        ? '#eab308'
-        : '#ef4444';
+      ? "#eab308"
+      : "#ef4444";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -192,7 +194,9 @@ function generateHTMLReport(
 
     <div class="summary">
       <div class="metric">
-        <div class="metric-value" style="color: ${scoreColor}">${summary.averageScore}</div>
+        <div class="metric-value" style="color: ${scoreColor}">${
+    summary.averageScore
+  }</div>
         <div class="metric-label">Average Score</div>
       </div>
       <div class="metric">
@@ -204,11 +208,15 @@ function generateHTMLReport(
         <div class="metric-label">Features Detected</div>
       </div>
       <div class="metric">
-        <div class="metric-value" style="color: ${summary.blockingIssues > 0 ? '#ef4444' : '#22c55e'}">${summary.blockingIssues}</div>
+        <div class="metric-value" style="color: ${
+          summary.blockingIssues > 0 ? "#ef4444" : "#22c55e"
+        }">${summary.blockingIssues}</div>
         <div class="metric-label">Blocking Issues</div>
       </div>
       <div class="metric">
-        <div class="metric-value" style="color: ${summary.warnings > 0 ? '#eab308' : '#22c55e'}">${summary.warnings}</div>
+        <div class="metric-value" style="color: ${
+          summary.warnings > 0 ? "#eab308" : "#22c55e"
+        }">${summary.warnings}</div>
         <div class="metric-label">Warnings</div>
       </div>
     </div>
@@ -234,13 +242,13 @@ function generateHTMLReport(
             </div>
           `
                   )
-                  .join('')
+                  .join("")
               : '<div style="color: #22c55e; font-weight: 600;">✓ All features are compatible</div>'
           }
         </div>
       `
         )
-        .join('')}
+        .join("")}
     </div>
 
     <div class="footer">

@@ -2,44 +2,59 @@
  * Dashboard Client
  * Send scan results to GreenLightCI Dashboard
  */
+import * as path from 'path';
 /**
  * Send scan results to dashboard
  */
-export async function sendToDashboard(result, config, projectName, branch = "main", commit) {
+export async function sendToDashboard(result, config, scanPath, options) {
     try {
-        // Count feature statuses from file results
-        let widelyCount = 0;
-        let newlyCount = 0;
-        let limitedCount = 0;
-        let notBaselineCount = 0;
+        // Extract project info from path (simplistic for now)
+        const projectName = path.basename(path.resolve(scanPath));
+        const owner = "local"; // Default for CLI scans
+        const repo = projectName;
+        // Collect all unique features from all files
+        const featureMap = new Map();
         for (const file of result.files) {
             for (const issue of file.issues) {
-                if (issue.status === "widely")
-                    widelyCount++;
-                else if (issue.status === "newly")
-                    newlyCount++;
-                else if (issue.status === "limited")
-                    limitedCount++;
-                else if (issue.status === "not-baseline")
-                    notBaselineCount++;
+                // Use featureId as key to avoid duplicates
+                if (!featureMap.has(issue.featureId)) {
+                    featureMap.set(issue.featureId, issue);
+                }
             }
         }
-        // Prepare dashboard data
+        // Prepare dashboard data matching ScanSubmission interface
         const dashboardData = {
-            projectName,
-            branch,
-            commit,
-            totalFiles: result.summary.totalFiles,
-            totalFeatures: result.summary.totalFeatures,
-            widelyAvailable: widelyCount,
-            newlyAvailable: newlyCount,
-            limited: limitedCount,
-            notBaseline: notBaselineCount,
-            compatibilityScore: result.summary.averageScore,
-            filesScanned: result.files.map((f) => ({
-                path: f.filePath,
-                features: f.features,
+            project: {
+                owner,
+                repo,
+                name: projectName,
+                url: `file://${path.resolve(scanPath)}`, // Local file path for CLI scans
+            },
+            scan: {
+                branch: options.branch || "main",
+                commitSha: options.commit,
+                totalFiles: result.summary.totalFiles,
+                totalFeatures: result.summary.totalFeatures,
+                blockingIssues: result.summary.blockingIssues,
+                warnings: result.summary.warnings,
+                averageScore: result.summary.averageScore,
+                targetYear: options.targetYear,
+                blockNewly: options.blockNewly,
+                blockLimited: options.blockLimited,
+            },
+            files: result.files.map((f) => ({
+                filePath: f.filePath,
                 score: f.score,
+                issuesCount: f.issues.length,
+                features: f.features,
+            })),
+            features: Array.from(featureMap.values()).map((issue) => ({
+                featureId: issue.featureId,
+                featureName: issue.featureName,
+                status: issue.status,
+                severity: issue.severity,
+                message: issue.message,
+                polyfill: undefined, // We don't track polyfills in CLI yet
             })),
         };
         // Send to dashboard
@@ -57,7 +72,7 @@ export async function sendToDashboard(result, config, projectName, branch = "mai
             return false;
         }
         const responseData = (await response.json());
-        console.log(`✓ Scan data sent to dashboard (Scan ID: ${responseData.id || "N/A"})`);
+        console.log(`✓ Scan data sent to dashboard (Scan ID: ${responseData.scanId || "N/A"})`);
         return true;
     }
     catch (error) {

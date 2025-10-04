@@ -1,4 +1,4 @@
-import { ReportOptions } from '../types.js';
+import { ReportOptions } from "../types.js";
 /**
  * Report command - generate detailed compatibility report
  */

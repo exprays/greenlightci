@@ -1,13 +1,13 @@
-import chokidar from 'chokidar';
-import { join } from 'path';
+import chokidar from "chokidar";
+import { join } from "path";
 import {
   getFeatureById,
   calculateCompatibilityScore,
   BaselineStatus,
-} from '../shared/index.js';
-import { readFileSync } from 'fs';
-import { detectFeatures as detectFeaturesFromParser } from '../scanner.js';
-import { parsePatterns } from '../scanner.js';
+} from "../shared/index.js";
+import { readFileSync } from "fs";
+import { detectFeatures as detectFeaturesFromParser } from "../scanner.js";
+import { parsePatterns } from "../scanner.js";
 import {
   printHeader,
   printInfo,
@@ -15,9 +15,9 @@ import {
   printError,
   printWarning,
   getStatusBadge,
-} from '../output.js';
-import { WatchOptions } from '../types.js';
-import chalk from 'chalk';
+} from "../output.js";
+import { WatchOptions } from "../types.js";
+import chalk from "chalk";
 
 /**
  * Watch command - continuously monitor files for changes
@@ -26,10 +26,10 @@ export async function watchCommand(
   path: string,
   options: WatchOptions
 ): Promise<void> {
-  printHeader('👀 GreenLightCI - Watch Mode');
+  printHeader("👀 GreenLightCI - Watch Mode");
   printInfo(`Watching: ${path}`);
   printInfo(`Target Year: ${options.targetYear}`);
-  printInfo('Press Ctrl+C to stop\n');
+  printInfo("Press Ctrl+C to stop\n");
 
   // Parse patterns
   const includePatterns = parsePatterns(options.include);
@@ -51,30 +51,30 @@ export async function watchCommand(
   let filesProcessed = 0;
 
   watcher
-    .on('ready', () => {
+    .on("ready", () => {
       initialScanComplete = true;
       printSuccess(
         `Initial scan complete. Watching for changes... (${filesProcessed} files)`
       );
     })
-    .on('add', (filePath) => {
+    .on("add", (filePath) => {
       if (!initialScanComplete) {
         filesProcessed++;
         return;
       }
-      processFile(filePath, 'added', options);
+      processFile(filePath, "added", options);
     })
-    .on('change', (filePath) => {
-      processFile(filePath, 'changed', options);
+    .on("change", (filePath) => {
+      processFile(filePath, "changed", options);
     })
-    .on('error', (error) => {
+    .on("error", (error) => {
       printError(`Watcher error: ${error}`);
     });
 
   // Keep process alive
-  process.on('SIGINT', () => {
-    console.log('\n');
-    printInfo('Stopping watch mode...');
+  process.on("SIGINT", () => {
+    console.log("\n");
+    printInfo("Stopping watch mode...");
     watcher.close();
     process.exit(0);
   });
@@ -85,11 +85,11 @@ export async function watchCommand(
  */
 function processFile(
   filePath: string,
-  action: 'added' | 'changed',
+  action: "added" | "changed",
   options: WatchOptions
 ): void {
   try {
-    const content = readFileSync(filePath, 'utf-8');
+    const content = readFileSync(filePath, "utf-8");
     const features = detectFeaturesFromParser(filePath, content);
 
     if (features.length === 0) {
@@ -117,12 +117,16 @@ function processFile(
         if (options.blockNewly) {
           hasBlockingIssues = true;
           issues.push(
-            `${chalk.red('✗')} ${feature.name} - ${getStatusBadge(feature.status)}`
+            `${chalk.red("✗")} ${feature.name} - ${getStatusBadge(
+              feature.status
+            )}`
           );
         } else {
           hasWarnings = true;
           issues.push(
-            `${chalk.yellow('⚠')} ${feature.name} - ${getStatusBadge(feature.status)}`
+            `${chalk.yellow("⚠")} ${feature.name} - ${getStatusBadge(
+              feature.status
+            )}`
           );
         }
       } else if (
@@ -137,12 +141,16 @@ function processFile(
         if (options.blockLimited) {
           hasBlockingIssues = true;
           issues.push(
-            `${chalk.red('✗')} ${feature.name} - ${getStatusBadge(feature.status)}`
+            `${chalk.red("✗")} ${feature.name} - ${getStatusBadge(
+              feature.status
+            )}`
           );
         } else {
           hasWarnings = true;
           issues.push(
-            `${chalk.yellow('⚠')} ${feature.name} - ${getStatusBadge(feature.status)}`
+            `${chalk.yellow("⚠")} ${feature.name} - ${getStatusBadge(
+              feature.status
+            )}`
           );
         }
       }
@@ -159,7 +167,7 @@ function processFile(
     // Print result
     const timestamp = new Date().toLocaleTimeString();
     const actionText =
-      action === 'added' ? chalk.green('added') : chalk.blue('changed');
+      action === "added" ? chalk.green("added") : chalk.blue("changed");
 
     console.log(
       `\n[${chalk.gray(timestamp)}] ${actionText} ${chalk.cyan(filePath)}`
@@ -171,13 +179,13 @@ function processFile(
     if (issues.length > 0) {
       issues.forEach((issue) => console.log(`  ${issue}`));
     } else {
-      console.log(`  ${chalk.green('✓')} All features are compatible`);
+      console.log(`  ${chalk.green("✓")} All features are compatible`);
     }
 
     if (hasBlockingIssues) {
-      printError('Blocking issues detected!');
+      printError("Blocking issues detected!");
     } else if (hasWarnings) {
-      printWarning('Consider adding polyfills');
+      printWarning("Consider adding polyfills");
     }
   } catch (error) {
     printError(`Failed to process ${filePath}: ${error}`);
