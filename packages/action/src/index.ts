@@ -84,20 +84,26 @@ async function sendToDashboard(
       files: Array.from(fileMap.entries()).map(([filePath, results]) => ({
         filePath,
         score: calculateCompatibilityScore(
-          results.filter(r => r.feature.status === BaselineStatus.WidelyAvailable).length,
-          results.filter(r => r.feature.status === BaselineStatus.NewlyAvailable).length,
-          results.filter(r => r.feature.status === BaselineStatus.Limited).length,
-          results.filter(r => r.feature.status === BaselineStatus.NotBaseline).length
+          results.filter(
+            (r) => r.feature.status === BaselineStatus.WidelyAvailable
+          ).length,
+          results.filter(
+            (r) => r.feature.status === BaselineStatus.NewlyAvailable
+          ).length,
+          results.filter((r) => r.feature.status === BaselineStatus.Limited)
+            .length,
+          results.filter((r) => r.feature.status === BaselineStatus.NotBaseline)
+            .length
         ),
-        issuesCount: results.filter(r => r.blocking).length,
-        features: results.map(r => ({
+        issuesCount: results.filter((r) => r.blocking).length,
+        features: results.map((r) => ({
           featureId: r.feature.id,
           featureName: r.feature.name,
           status: r.feature.status,
           severity: r.severity,
         })),
       })),
-      features: report.results.map(r => ({
+      features: report.results.map((r) => ({
         featureId: r.feature.id,
         featureName: r.feature.name,
         status: r.feature.status,
@@ -125,7 +131,9 @@ async function sendToDashboard(
     core.info(`✅ Results sent to dashboard successfully`);
     core.info(`   Scan ID: ${result.scan?.id || 'unknown'}`);
   } catch (error) {
-    core.warning(`Failed to send results to dashboard: ${error instanceof Error ? error.message : String(error)}`);
+    core.warning(
+      `Failed to send results to dashboard: ${error instanceof Error ? error.message : String(error)}`
+    );
     // Don't fail the action if dashboard reporting fails
   }
 }

@@ -51,9 +51,13 @@ export async function GET(request: NextRequest) {
 
     dateMap.forEach((scansForDay, date) => {
       const avgScore = Math.round(
-        scansForDay.reduce((sum: number, s: any) => sum + s.averageScore, 0) / scansForDay.length
+        scansForDay.reduce((sum: number, s: any) => sum + s.averageScore, 0) /
+          scansForDay.length
       );
-      const totalFeatures = scansForDay.reduce((sum: number, s: any) => sum + s.totalFeatures, 0);
+      const totalFeatures = scansForDay.reduce(
+        (sum: number, s: any) => sum + s.totalFeatures,
+        0
+      );
       const totalIssues = scansForDay.reduce(
         (sum: number, s: any) => sum + s.blockingIssues + s.warnings,
         0
@@ -82,21 +86,32 @@ export async function GET(request: NextRequest) {
       take: 20,
     });
 
-    const formattedFeatureStats: FeatureStats[] = featureStats.map((stat: any) => ({
-      featureId: stat.featureId,
-      featureName: stat.featureName,
-      status: stat.status,
-      count: stat._count,
-    }));
+    const formattedFeatureStats: FeatureStats[] = featureStats.map(
+      (stat: any) => ({
+        featureId: stat.featureId,
+        featureName: stat.featureName,
+        status: stat.status,
+        count: stat._count,
+      })
+    );
 
     // Calculate summary statistics
     const summary = {
       totalScans: scans.length,
-      averageScore: trendData.length > 0
-        ? Math.round(trendData.reduce((sum: number, d: any) => sum + d.score, 0) / trendData.length)
-        : 0,
-      totalFeatures: new Set(scans.flatMap((s: any) => s.features.map((f: any) => f.featureId))).size,
-      totalIssues: scans.reduce((sum: number, s: any) => sum + s.blockingIssues + s.warnings, 0),
+      averageScore:
+        trendData.length > 0
+          ? Math.round(
+              trendData.reduce((sum: number, d: any) => sum + d.score, 0) /
+                trendData.length
+            )
+          : 0,
+      totalFeatures: new Set(
+        scans.flatMap((s: any) => s.features.map((f: any) => f.featureId))
+      ).size,
+      totalIssues: scans.reduce(
+        (sum: number, s: any) => sum + s.blockingIssues + s.warnings,
+        0
+      ),
     };
 
     return NextResponse.json({

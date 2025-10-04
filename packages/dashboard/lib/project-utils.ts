@@ -57,9 +57,15 @@ export async function getGlobalTrends() {
       take: 100,
     });
 
-    const averageScore = recentScans.length > 0
-      ? Math.round(recentScans.reduce((sum: number, s: any) => sum + s.averageScore, 0) / recentScans.length)
-      : 0;
+    const averageScore =
+      recentScans.length > 0
+        ? Math.round(
+            recentScans.reduce(
+              (sum: number, s: any) => sum + s.averageScore,
+              0
+            ) / recentScans.length
+          )
+        : 0;
 
     const topFeatures = await prisma.featureUsage.groupBy({
       by: ['featureId', 'featureName'],
@@ -87,4 +93,3 @@ export async function getGlobalTrends() {
     throw error;
   }
 }
-

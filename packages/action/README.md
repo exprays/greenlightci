@@ -29,10 +29,10 @@ jobs:
       contents: read
       pull-requests: write
       statuses: write
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Check Baseline Compatibility
         uses: exprays/greenlightci@v1
         with:
@@ -45,37 +45,37 @@ jobs:
 ### With Dashboard Integration
 
 ```yaml
-      - name: Check Baseline Compatibility
-        uses: exprays/greenlightci@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          baseline-year: '2023'
-          block-newly-available: false
-          block-limited-availability: true
-          # Send results to dashboard
-          dashboard-url: ${{ vars.DASHBOARD_URL }}
-          dashboard-api-key: ${{ secrets.DASHBOARD_API_KEY }}
+- name: Check Baseline Compatibility
+  uses: exprays/greenlightci@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    baseline-year: '2023'
+    block-newly-available: false
+    block-limited-availability: true
+    # Send results to dashboard
+    dashboard-url: ${{ vars.DASHBOARD_URL }}
+    dashboard-api-key: ${{ secrets.DASHBOARD_API_KEY }}
 ```
 
 ## Configuration Options
 
-| Input | Description | Required | Default |
-|-------|-------------|----------|---------|
-| `github-token` | GitHub token for API access | Yes | `${{ github.token }}` |
-| `baseline-year` | Target Baseline year (e.g., "2023") | No | `'2023'` |
-| `block-newly-available` | Block PRs with "Newly Available" features | No | `false` |
-| `block-limited-availability` | Block PRs with "Limited Availability" features | No | `true` |
-| `custom-browser-targets` | Custom browser targets (JSON format) | No | - |
-| `dashboard-url` | GreenLightCI Dashboard URL for reporting | No | - |
-| `dashboard-api-key` | API key for dashboard authentication | No | - |
+| Input                        | Description                                    | Required | Default               |
+| ---------------------------- | ---------------------------------------------- | -------- | --------------------- |
+| `github-token`               | GitHub token for API access                    | Yes      | `${{ github.token }}` |
+| `baseline-year`              | Target Baseline year (e.g., "2023")            | No       | `'2023'`              |
+| `block-newly-available`      | Block PRs with "Newly Available" features      | No       | `false`               |
+| `block-limited-availability` | Block PRs with "Limited Availability" features | No       | `true`                |
+| `custom-browser-targets`     | Custom browser targets (JSON format)           | No       | -                     |
+| `dashboard-url`              | GreenLightCI Dashboard URL for reporting       | No       | -                     |
+| `dashboard-api-key`          | API key for dashboard authentication           | No       | -                     |
 
 ## Outputs
 
-| Output | Description |
-|--------|-------------|
-| `compatibility-score` | Overall compatibility score (0-100) |
-| `features-detected` | Number of web features detected |
-| `blocking-issues` | Number of compatibility issues blocking the PR |
+| Output                | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `compatibility-score` | Overall compatibility score (0-100)            |
+| `features-detected`   | Number of web features detected                |
+| `blocking-issues`     | Number of compatibility issues blocking the PR |
 
 ## Custom Browser Targets
 
