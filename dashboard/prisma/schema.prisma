@@ -25,6 +25,7 @@ model User {
   accounts Account[]
   sessions Session[]
   projects Project[]
+  apiKeys  ApiKey[]
 
   @@map("users")
 }
@@ -67,6 +68,24 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+// API Keys for external integrations (GitHub Action, CLI)
+model ApiKey {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String // User-friendly name like "Production CI" or "Local Development"
+  key         String   @unique // The actual API key (hashed in production)
+  lastUsedAt  DateTime?
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime? // Optional expiration
+  isActive    Boolean  @default(true)
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([key])
+  @@map("api_keys")
 }
 
 // GitHub Repository/Project being tracked

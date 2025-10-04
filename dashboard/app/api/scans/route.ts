@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
-import { ScanSubmission } from '@/lib/types';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { ScanSubmission } from "@/lib/types";
 
 /**
  * POST /api/scans
@@ -8,24 +8,54 @@ import { ScanSubmission } from '@/lib/types';
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as ScanSubmission;
+    const body = (await request.json()) as ScanSubmission;
 
     // Validate required fields
     if (!body.project || !body.scan || !body.files) {
       return NextResponse.json(
-        { error: 'Missing required fields: project, scan, files' },
+        { error: "Missing required fields: project, scan, files" },
         { status: 400 }
       );
     }
 
-    // Check authorization (API key or webhook signature)
-    const apiKey = request.headers.get('x-api-key');
-    if (apiKey !== process.env.API_SECRET_KEY) {
+    // Check authorization (API key from database or fallback to env)
+    const apiKeyHeader = request.headers.get("x-api-key");
+    if (!apiKeyHeader) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: "Missing API key. Include X-API-Key header." },
         { status: 401 }
       );
     }
+
+    // Check if it's a valid API key from the database
+    const validApiKey = await prisma.apiKey.findFirst({
+      where: {
+        key: apiKeyHeader,
+        isActive: true,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    // Also allow the legacy API_SECRET_KEY from environment for backward compatibility
+    const isValidKey =
+      validApiKey || apiKeyHeader === process.env.API_SECRET_KEY;
+
+    if (!isValidKey) {
+      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
+    }
+
+    // Update last used timestamp if it's a database key
+    if (validApiKey) {
+      await prisma.apiKey.update({
+        where: { id: validApiKey.id },
+        data: { lastUsedAt: new Date() },
+      });
+    }
+
+    // Determine userId for the project
+    const userId = validApiKey?.userId || "system";
 
     // Find or create project
     let project = await prisma.project.findUnique({
@@ -38,8 +68,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!project) {
-      // Create project without userId for now (public/anonymous)
-      // In production, you'd require authentication
+      // Create project and associate with the API key owner
       project = await prisma.project.create({
         data: {
           name: body.project.name,
@@ -47,7 +76,7 @@ export async function POST(request: NextRequest) {
           repo: body.project.repo,
           url: body.project.url,
           description: `Automated tracking for ${body.project.name}`,
-          userId: 'system', // System user for automated submissions
+          userId, // Use the userId from the API key
         },
       });
     }
@@ -59,7 +88,7 @@ export async function POST(request: NextRequest) {
         prNumber: body.scan.prNumber,
         branch: body.scan.branch,
         commitSha: body.scan.commitSha,
-        triggeredBy: 'action',
+        triggeredBy: "action",
         totalFiles: body.scan.totalFiles,
         totalFeatures: body.scan.totalFeatures,
         blockingIssues: body.scan.blockingIssues,
@@ -100,12 +129,15 @@ export async function POST(request: NextRequest) {
       success: true,
       scanId: scan.id,
       projectId: project.id,
-      message: 'Scan data recorded successfully',
+      message: "Scan data recorded successfully",
     });
   } catch (error) {
-    console.error('Error recording scan:', error);
+    console.error("Error recording scan:", error);
     return NextResponse.json(
-      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
+      {
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
@@ -118,19 +150,19 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const projectId = searchParams.get('projectId');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const projectId = searchParams.get("projectId");
+    const limit = parseInt(searchParams.get("limit") || "50");
 
     if (!projectId) {
       return NextResponse.json(
-        { error: 'projectId query parameter is required' },
+        { error: "projectId query parameter is required" },
         { status: 400 }
       );
     }
 
     const scans = await prisma.scan.findMany({
       where: { projectId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: limit,
       include: {
         files: true,
@@ -151,9 +183,9 @@ export async function GET(request: NextRequest) {
       scans,
     });
   } catch (error) {
-    console.error('Error fetching scans:', error);
+    console.error("Error fetching scans:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -165,21 +197,22 @@ export async function GET(request: NextRequest) {
 async function updateProjectStats(projectId: string) {
   const scans = await prisma.scan.findMany({
     where: { projectId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: 10,
   });
 
   if (scans.length === 0) return;
 
   const avgScore = Math.round(
-    scans.reduce((sum: number, scan: any) => sum + scan.averageScore, 0) / scans.length
+    scans.reduce((sum: number, scan: any) => sum + scan.averageScore, 0) /
+      scans.length
   );
 
   const featureCounts = await prisma.featureUsage.groupBy({
-    by: ['featureId', 'featureName'],
+    by: ["featureId", "featureName"],
     where: { scanId: { in: scans.map((s: any) => s.id) } },
     _count: true,
-    orderBy: { _count: { featureId: 'desc' } },
+    orderBy: { _count: { featureId: "desc" } },
     take: 1,
   });
 
@@ -188,9 +221,20 @@ async function updateProjectStats(projectId: string) {
   // Determine trend (compare last 3 vs previous 3)
   let trendDirection: string | null = null;
   if (scans.length >= 6) {
-    const recentAvg = scans.slice(0, 3).reduce((sum: number, s: any) => sum + s.averageScore, 0) / 3;
-    const previousAvg = scans.slice(3, 6).reduce((sum: number, s: any) => sum + s.averageScore, 0) / 3;
-    trendDirection = recentAvg > previousAvg + 5 ? 'improving' : recentAvg < previousAvg - 5 ? 'declining' : 'stable';
+    const recentAvg =
+      scans
+        .slice(0, 3)
+        .reduce((sum: number, s: any) => sum + s.averageScore, 0) / 3;
+    const previousAvg =
+      scans
+        .slice(3, 6)
+        .reduce((sum: number, s: any) => sum + s.averageScore, 0) / 3;
+    trendDirection =
+      recentAvg > previousAvg + 5
+        ? "improving"
+        : recentAvg < previousAvg - 5
+        ? "declining"
+        : "stable";
   }
 
   await prisma.projectStats.upsert({

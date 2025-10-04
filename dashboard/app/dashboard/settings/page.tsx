@@ -1,14 +1,15 @@
-import DashboardLayout from '@/components/DashboardLayout';
+import DashboardLayout from "@/components/DashboardLayout";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/Card';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import { Settings, Github, Key, Database, Bell } from 'lucide-react';
+} from "@/components/Card";
+import ApiKeysSection from "@/components/ApiKeysSection";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { Settings, Github, Key, Database, Bell } from "lucide-react";
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
@@ -42,13 +43,13 @@ export default async function SettingsPage() {
                   {session.user.image && (
                     <img
                       src={session.user.image}
-                      alt={session.user.name || 'User'}
+                      alt={session.user.name || "User"}
                       className="w-16 h-16 rounded-full"
                     />
                   )}
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white">
-                      {session.user.name || 'User'}
+                      {session.user.name || "User"}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {session.user.email}
@@ -79,33 +80,7 @@ export default async function SettingsPage() {
         </Card>
 
         {/* API Keys */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Key className="w-5 h-5 mr-2" />
-              API Keys
-            </CardTitle>
-            <CardDescription>
-              Manage API keys for external integrations
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Use API keys to submit scan results from the GitHub Action or
-                CLI tool.
-              </p>
-              <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                <p className="text-xs font-mono text-gray-600 dark:text-gray-400">
-                  API_SECRET_KEY=your-api-key-here
-                </p>
-              </div>
-              <button className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300">
-                Generate New API Key
-              </button>
-            </div>
-          </CardContent>
-        </Card>
+        <ApiKeysSection />
 
         {/* Database */}
         <Card>
@@ -132,7 +107,7 @@ export default async function SettingsPage() {
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Database path:{' '}
+                Database path:{" "}
                 <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                   ./dev.db
                 </code>
