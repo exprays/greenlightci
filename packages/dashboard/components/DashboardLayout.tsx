@@ -101,7 +101,10 @@ export default function DashboardLayout({
                 </p>
               </div>
               <button
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                onClick={() => {
+                  window.location.href = '/api/auth/signout';
+                }}
+                className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                 title="Sign out"
               >
                 <LogOut className="w-4 h-4" />
@@ -133,10 +136,31 @@ export default function DashboardLayout({
                 href="https://github.com/exprays/greenlightci"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                title="View on GitHub"
               >
                 <Github className="w-5 h-5" />
               </a>
+              {user && (
+                <div className="flex items-center space-x-3 pl-4 border-l border-gray-200 dark:border-gray-700">
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name || 'User'}
+                      className="w-8 h-8 rounded-full ring-2 ring-purple-500"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center ring-2 ring-purple-400">
+                      <span className="text-white font-semibold text-sm">
+                        {user.name?.charAt(0) || 'U'}
+                      </span>
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {user.name}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </header>
