@@ -5,13 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { Badge, ScoreBadge } from '@/components/Badge';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { FolderGit2, TrendingUp, AlertCircle, CheckCircle2 } from 'lucide-react';
+import {
+  FolderGit2,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
 
 async function getDashboardStats() {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/stats`, {
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/stats`,
+      {
+        cache: 'no-store',
+      }
+    );
     if (!response.ok) return null;
     const data = await response.json();
     return data.stats;
@@ -89,10 +97,14 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex items-center space-x-4">
                       {scan.blockingIssues > 0 && (
-                        <Badge variant="error">{scan.blockingIssues} blocking</Badge>
+                        <Badge variant="error">
+                          {scan.blockingIssues} blocking
+                        </Badge>
                       )}
                       {scan.warnings > 0 && (
-                        <Badge variant="warning">{scan.warnings} warnings</Badge>
+                        <Badge variant="warning">
+                          {scan.warnings} warnings
+                        </Badge>
                       )}
                       <ScoreBadge score={scan.score} />
                     </div>

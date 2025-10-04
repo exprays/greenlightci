@@ -4,13 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { Badge, ScoreBadge } from '@/components/Badge';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { FolderGit2, ExternalLink, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import {
+  FolderGit2,
+  ExternalLink,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+} from 'lucide-react';
 
 async function getProjects() {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/projects`, {
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/projects`,
+      {
+        cache: 'no-store',
+      }
+    );
     if (!response.ok) return [];
     const data = await response.json();
     return data.projects || [];
@@ -30,9 +39,12 @@ export default async function ProjectsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Projects</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Projects
+            </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400">
-              {projects.length} {projects.length === 1 ? 'project' : 'projects'} being tracked
+              {projects.length} {projects.length === 1 ? 'project' : 'projects'}{' '}
+              being tracked
             </p>
           </div>
         </div>
@@ -43,7 +55,7 @@ export default async function ProjectsPage() {
             {projects.map((project: any) => {
               const latestScan = project.scans[0];
               const stats = project.stats;
-              
+
               return (
                 <Card key={project.id} hover>
                   <CardHeader>
@@ -67,7 +79,7 @@ export default async function ProjectsPage() {
                       </a>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent className="space-y-4">
                     {/* Latest Scan */}
                     {latestScan ? (
@@ -78,9 +90,11 @@ export default async function ProjectsPage() {
                           </span>
                           <ScoreBadge score={latestScan.averageScore} />
                         </div>
-                        
+
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400">Issues</span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Issues
+                          </span>
                           <div className="flex items-center space-x-2">
                             {latestScan.blockingIssues > 0 && (
                               <Badge variant="error">
@@ -92,9 +106,10 @@ export default async function ProjectsPage() {
                                 {latestScan.warnings} warnings
                               </Badge>
                             )}
-                            {latestScan.blockingIssues === 0 && latestScan.warnings === 0 && (
-                              <Badge variant="success">No issues</Badge>
-                            )}
+                            {latestScan.blockingIssues === 0 &&
+                              latestScan.warnings === 0 && (
+                                <Badge variant="success">No issues</Badge>
+                              )}
                           </div>
                         </div>
 
@@ -102,7 +117,9 @@ export default async function ProjectsPage() {
                         {stats && (
                           <>
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray-600 dark:text-gray-400">Total Scans</span>
+                              <span className="text-gray-600 dark:text-gray-400">
+                                Total Scans
+                              </span>
                               <span className="font-medium text-gray-900 dark:text-white">
                                 {stats.totalScans}
                               </span>
@@ -110,24 +127,32 @@ export default async function ProjectsPage() {
 
                             {stats.trendDirection && (
                               <div className="flex items-center justify-between text-sm">
-                                <span className="text-gray-600 dark:text-gray-400">Trend</span>
+                                <span className="text-gray-600 dark:text-gray-400">
+                                  Trend
+                                </span>
                                 <div className="flex items-center space-x-1">
                                   {stats.trendDirection === 'improving' && (
                                     <>
                                       <TrendingUp className="w-4 h-4 text-green-600" />
-                                      <span className="text-green-600 font-medium">Improving</span>
+                                      <span className="text-green-600 font-medium">
+                                        Improving
+                                      </span>
                                     </>
                                   )}
                                   {stats.trendDirection === 'declining' && (
                                     <>
                                       <TrendingDown className="w-4 h-4 text-red-600" />
-                                      <span className="text-red-600 font-medium">Declining</span>
+                                      <span className="text-red-600 font-medium">
+                                        Declining
+                                      </span>
                                     </>
                                   )}
                                   {stats.trendDirection === 'stable' && (
                                     <>
                                       <Minus className="w-4 h-4 text-gray-600" />
-                                      <span className="text-gray-600 font-medium">Stable</span>
+                                      <span className="text-gray-600 font-medium">
+                                        Stable
+                                      </span>
                                     </>
                                   )}
                                 </div>
@@ -139,7 +164,9 @@ export default async function ProjectsPage() {
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                                   Most Used Feature
                                 </p>
-                                <Badge variant="info">{stats.mostUsedFeature}</Badge>
+                                <Badge variant="info">
+                                  {stats.mostUsedFeature}
+                                </Badge>
                               </div>
                             )}
                           </>
@@ -147,7 +174,8 @@ export default async function ProjectsPage() {
 
                         <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Last scanned {new Date(latestScan.createdAt).toLocaleString()}
+                            Last scanned{' '}
+                            {new Date(latestScan.createdAt).toLocaleString()}
                           </p>
                         </div>
                       </>
@@ -171,7 +199,8 @@ export default async function ProjectsPage() {
                 No projects yet
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                Start tracking your projects by running the GitHub Action or submitting scans via the CLI
+                Start tracking your projects by running the GitHub Action or
+                submitting scans via the CLI
               </p>
               <Link
                 href="https://github.com/exprays/greenlightci"

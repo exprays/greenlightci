@@ -1,5 +1,11 @@
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/Card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/Card';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { Settings, Github, Key, Database, Bell } from 'lucide-react';
@@ -27,9 +33,7 @@ export default async function SettingsPage() {
               <Github className="w-5 h-5 mr-2" />
               Account
             </CardTitle>
-            <CardDescription>
-              Your GitHub account information
-            </CardDescription>
+            <CardDescription>Your GitHub account information</CardDescription>
           </CardHeader>
           <CardContent>
             {session?.user ? (
@@ -88,7 +92,8 @@ export default async function SettingsPage() {
           <CardContent>
             <div className="space-y-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Use API keys to submit scan results from the GitHub Action or CLI tool.
+                Use API keys to submit scan results from the GitHub Action or
+                CLI tool.
               </p>
               <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                 <p className="text-xs font-mono text-gray-600 dark:text-gray-400">
@@ -109,9 +114,7 @@ export default async function SettingsPage() {
               <Database className="w-5 h-5 mr-2" />
               Database
             </CardTitle>
-            <CardDescription>
-              Database connection and status
-            </CardDescription>
+            <CardDescription>Database connection and status</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -129,7 +132,10 @@ export default async function SettingsPage() {
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Database path: <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">./dev.db</code>
+                Database path:{' '}
+                <code className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  ./dev.db
+                </code>
               </p>
             </div>
           </CardContent>
@@ -186,9 +192,7 @@ export default async function SettingsPage() {
             <CardTitle className="text-red-600 dark:text-red-400">
               Danger Zone
             </CardTitle>
-            <CardDescription>
-              Irreversible actions
-            </CardDescription>
+            <CardDescription>Irreversible actions</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

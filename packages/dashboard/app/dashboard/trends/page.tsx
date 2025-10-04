@@ -6,9 +6,12 @@ import { TrendingUp, Activity, BarChart3, LineChart } from 'lucide-react';
 
 async function getTrends() {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/trends?days=30`, {
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/trends?days=30`,
+      {
+        cache: 'no-store',
+      }
+    );
     if (!response.ok) return null;
     const data = await response.json();
     return data;
@@ -126,7 +129,8 @@ export default async function TrendsPage() {
                             })}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {day.features || 0} features · {day.issues || 0} issues
+                            {day.features || 0} features · {day.issues || 0}{' '}
+                            issues
                           </p>
                         </div>
                         <div className="text-right">
@@ -143,7 +147,9 @@ export default async function TrendsPage() {
                 ) : (
                   <div className="text-center py-12">
                     <LineChart className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                    <p className="text-gray-600 dark:text-gray-400">No trend data available yet</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      No trend data available yet
+                    </p>
                     <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
                       Run scans to start tracking trends
                     </p>
@@ -177,14 +183,18 @@ export default async function TrendsPage() {
                           <p className="text-lg font-semibold text-purple-600">
                             {feature.count || 0}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">uses</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            uses
+                          </p>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-gray-600 dark:text-gray-400">No feature data available</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      No feature data available
+                    </p>
                   </div>
                 )}
               </CardContent>
